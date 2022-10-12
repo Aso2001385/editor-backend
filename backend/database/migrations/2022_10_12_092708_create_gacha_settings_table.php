@@ -16,7 +16,7 @@ class CreateGachaSettingsTable extends Migration
         Schema::create('gacha_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->char('file_code', 7);
+            $table->char('file_code', 7)->unique();
             $table->timestamps();
             $table->softDeletes();
         });
