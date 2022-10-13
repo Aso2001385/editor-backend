@@ -670,7 +670,12 @@ paths:
                 example:
                   value:
                     result: true
-      description: プロジェクト内容を保存
+      description: |-
+        プロジェクト内容を保存
+
+        おきのどくですが
+        ぼうけんのしょ１ばんは
+        きえてしまいました.
       tags:
         - Paths
         - Project
@@ -801,7 +806,7 @@ paths:
                   value:
                     result: true
       description: 特定idのデザイン情報を論理削除
-  '/designs/buy/{id}':
+  '/designs/{id}/buy':
     parameters:
       - schema:
           type: string
@@ -844,7 +849,7 @@ paths:
                     user_id: 1
                     name: design1
       operationId: get-designs-gacha
-      description: ガチャァァァ！！　10連ガチャァ！！　いっぱいいっぱい回すのぉぉ！！　溶けるぅう！！　溶けちゃうう！！
+      description: ガチャァァァ!!　10連ガチャァ!!　いっぱいいっぱい回すのぉぉ!!　溶けるぅ!!　溶けちゃうう!!
 components:
   schemas:
     User:
