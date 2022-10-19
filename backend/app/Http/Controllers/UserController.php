@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Hashing\HashManager;
 use Illuminate\Support\Facades\Http;
 
@@ -83,16 +85,23 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $users = 'NOTHING';
+        try {
+            if (strlen($request['id']) > 0 && strlen($request['email']) > 0 && strlen($request['name']) > 0) {
+                $users = User::where('id', '=', $request['id'])->where('email', 'LIKE', '%' . $request['email'] . '%')->where('name', 'LIKE', '%' . $request['name'] . '%')->get();
+            } else if (strlen($request['email']) > 0 && strlen($request['name']) > 0) {
+                $users = User::where('email', 'LIKE', '%' . $request['email'] . '%')->where('name', 'LIKE', '%' . $request['name'] . '%')->get();
+            } else if (strlen($request['id']) > 0) {
+                $users = User::find($request['id'])->get();
+            } else if (strlen($request['email']) > 0) {
+                $users = User::where('email', 'LIKE', '%' . $request['email'] . '%')->get();
+            } else if (strlen($request['name']) > 0) {
+                $users = User::where('name', 'LIKE', '%' . $request['name'] . '%')->get();
+            }
 
-        if (isset($request['id']) && isset($request['name'])) {
-            $users = User::where('id', '=', $request['id'])->andWhere('name LIKE', '%' . $request['name'] . '%')->all()->toArray();
-        } else if (isset($request['id'])) {
-            $users = User::find($request['id']);
-        } else if (isset($request['id'])) {
-            $users = User::where('name LIKE', '%' . $request['name'] . '%')->all()->toArray();
+            $users['count'] = count($users);
+        } catch (Exception $e) {
+            return response()->json($e, $e->getCode());
         }
-
 
         return response()->json($users, Response::HTTP_OK);
     }
