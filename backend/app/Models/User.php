@@ -18,9 +18,11 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'class',
         'name',
         'email',
         'password',
+        'point',
     ];
 
     /**
@@ -29,6 +31,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
+        'class',
         'password',
         'remember_token',
     ];
@@ -41,4 +44,11 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $datas = ['deleted_at'];
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }
