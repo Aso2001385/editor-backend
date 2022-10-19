@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\Design;
 use App\Models\UserDesign;
+use Exception;
 
 class DesignController extends Controller
 {
@@ -53,11 +55,21 @@ class DesignController extends Controller
 
     public function buy(Design $design)
     {
-        $design_user_info = [
-            'design_id' => auth()->user()->id,
-            'user_id' => $design['user_id']
-        ];
-        $design_user = UserDesign::create($design_user_info);
+        $user = User::find(auth()->user()->id);
+        $user['point'] = $user['point'] - $design['point'];
+
+        if ($user['point'] >= 0) {
+            $design_user_info = [
+                'design_id' => $design['id'],
+                'user_id' => auth()->user()->id
+            ];
+
+            $design_user = UserDesign::create($design_user_info);
+
+            $user->update(['point' => $user['point']]);
+        } else {
+            return response()->json('Not Enough', Response::HTTP_I_AM_A_TEAPOT);
+        }
 
         return response()->json($design, Response::HTTP_OK);
     }

@@ -52,6 +52,9 @@ class Handler extends ExceptionHandler
                     case 404:
                         $result = __('Not Found');
                         break;
+                    case 418:
+                        $result = __('I am a teapot');
+                        break;
                     case 500:
                         $result = __('Server Error');
                         break;

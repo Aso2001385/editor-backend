@@ -10,6 +10,8 @@ class ProjectDesign extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = "project_design";
+
     protected $fillable = [
         'project_id',
         'design_id',
