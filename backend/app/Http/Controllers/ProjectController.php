@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use app\Models\Project;
+use App\Models\Project;
 use Illuminate\Http\Response;
 
 class ProjectController extends Controller
@@ -29,9 +29,6 @@ class ProjectController extends Controller
     public function create()
     {
         //
-    }
-
-
     }
 
     /**
@@ -82,7 +79,7 @@ class ProjectController extends Controller
     public function update(Request $request,Project $project)
     {
         //
-        $project=Project::update($request->all());
+        $project->Project::update($request->all());
         return response()->json($project,Response::HTTP_OK);
     }
 
@@ -96,7 +93,8 @@ class ProjectController extends Controller
     {
         //
         $project->delete();
-        return response()->Response::HTTP_OK;
+        $result = 'true';
+        return response()->json($result,Response::HTTP_OK);
 
     }
 }
