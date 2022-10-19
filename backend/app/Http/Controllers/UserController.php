@@ -64,9 +64,15 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         //
-        $user->User::update($request->all());
-
+        $user->update($request->all());
         return response()->json($user, Response::HTTP_OK);
+    }
+
+    public function passUpdate(Request $request)
+    {
+        $result = true;
+
+        return response()->json($result, Response::HTTP_OK);
     }
 
     /**

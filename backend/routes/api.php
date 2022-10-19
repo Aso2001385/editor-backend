@@ -17,6 +17,7 @@ use App\Http\Controllers\ProjectController;
 */
 
 Route::apiResource('users', UserController::class);
+Route::put('users/password', [UserController::class, 'passUpdate']);
 Route::post('users/search', [UserController::class, 'search']);
 Route::post('login', [LoginController::class, 'login']);
 
