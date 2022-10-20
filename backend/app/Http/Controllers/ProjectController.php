@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use app\Models\Project;
 use Illuminate\Http\Response;
+use app\Models\Project;
+use app\Models\ProjectUser;
+use app\Models\ProjectDesign;
+use app\Models\UserDesign;
 
 class ProjectController extends Controller
 {
@@ -16,22 +19,9 @@ class ProjectController extends Controller
     public function index()
     {
         //プロジェクトテーブルから全件取得
-        $projects=Project::all()->toArray();
+        $projects = Project::all()->toArray();
 
         return response()->json($projects, Response::HTTP_OK);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-
     }
 
     /**
@@ -43,8 +33,28 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         //
-        $project= Project::create($request->all());
-        return response()->json($project,Response::HTTP_OK);
+        $project = Project::create($request->all());
+        $project_user_info = [
+            'project_id' => $project['id'],
+            'user_id' => $project['user_id']
+        ];
+        ProjectUser::create($project_user_info);
+
+        $user_designs = UserDesign::where('user_id', '=', $project['user_id'])->select('design_id')->get();
+
+        foreach ($user_designs as $user_design) {
+            $project_design_info = [
+                'design_id' => $user_design['design_id'],
+                'project_id' => $project['id']
+            ];
+            ProjectDesign::create($project_design_info);
+        }
+
+        return response()->json($project, Response::HTTP_OK);
+    }
+
+    public function copy(Project $project)
+    {
     }
 
     /**
@@ -57,19 +67,7 @@ class ProjectController extends Controller
     {
         //
 
-        return response()->json($project,Response::HTTP_OK);
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit()
-    {
-        //
+        return response()->json($project, Response::HTTP_OK);
     }
 
     /**
@@ -79,11 +77,11 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,Project $project)
+    public function update(Request $request, Project $project)
     {
         //
-        $project=Project::update($request->all());
-        return response()->json($project,Response::HTTP_OK);
+        $project->update($request->all());
+        return response()->json($project, Response::HTTP_OK);
     }
 
     /**
@@ -96,7 +94,7 @@ class ProjectController extends Controller
     {
         //
         $project->delete();
-        return response()->Response::HTTP_OK;
-
+        $result = true;
+        return response()->json($result, Response::HTTP_OK);
     }
 }
