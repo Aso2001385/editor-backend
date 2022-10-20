@@ -12,6 +12,7 @@ class Project extends Model
     protected $fillable = [
         'user_id',
         'name'
+
     ];
     protected $datas = ['deleted_at'];
 
