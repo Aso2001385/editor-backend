@@ -158,7 +158,7 @@ paths:
       operationId: get-users-id
       description: |-
         特定idのユーザー情報を取得
-        プロジェクトはプロジェクトユーザーテーブルからもってｋ
+        プロジェクトはプロジェクトユーザーテーブルからもってく
     put:
       summary: User情報編集
       operationId: put-users-id
@@ -384,7 +384,6 @@ paths:
                     - string
                     - 'null'
                   example: '1'
-                  maxLength: 255
                 name:
                   type:
                     - string
