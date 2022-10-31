@@ -99,7 +99,7 @@ paths:
                       name: 翔
                       email: 2001195@s.asojuku.ac.jp
                       point: 500
-      description: ユーザー全件取得
+      description: ユーザー全件取得。
       tags:
         - Paths
         - User
