@@ -50,21 +50,11 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->hasMany(Project::class);
+        return $this->belongsToMany(Project::class, ProjectUser::class, 'user_id', 'project_id')->withTimestamps();
     }
 
     public function designs()
     {
-        return $this->hasMany(Design::class);
-    }
-
-    public function project_user()
-    {
-        return $this->belongsToMany(Project::class);
-    }
-
-    public function design_user()
-    {
-        return $this->belongsToMany(Design::class);
+        return $this->belongsToMany(Design::class, UserDesign::class, 'user_id', 'design_id')->withTimestamps();
     }
 }

@@ -99,7 +99,7 @@ paths:
                       name: 翔
                       email: 2001195@s.asojuku.ac.jp
                       point: 500
-      description: ユーザー全件取得
+      description: ユーザー全件取得。
       tags:
         - Paths
         - User
@@ -725,11 +725,6 @@ paths:
             schema:
               type: object
               properties:
-                user_id:
-                  type: integer
-                  example: 1
-                  minimum: 1
-                  maximum: 255
                 name:
                   type: string
                   minLength: 1
@@ -740,14 +735,9 @@ paths:
                   minimum: 0
                   maximum: 500
                   example: 5
-              required:
-                - user_id
-                - name
-                - point
             examples:
-              example-1:
+              example:
                 value:
-                  user_id: 1
                   name: design1
                   point: 5
       description: デザイン作成
@@ -797,28 +787,6 @@ paths:
                     user_id: 1
                     name: design1
       description: 特定idのデザイン情報を編集
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: design1
-                point:
-                  type: integer
-                  maximum: 500
-                  minimum: 0
-                  example: 5
-              required:
-                - name
-                - point
-            examples:
-              example:
-                value:
-                  name: design1
-                  point: 5
     delete:
       summary: Design情報削除
       operationId: delete-designs-id
@@ -840,7 +808,7 @@ paths:
   '/designs/{id}/buy':
     parameters:
       - schema:
-          type: integer
+          type: string
         name: id
         in: path
         required: true
