@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Http\Resources\UserResource;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Hashing\HashManager;
@@ -50,7 +51,8 @@ class UserController extends Controller
     public function show(User $user)
     {
         //
-        $user->projects;
+        //$user->projects;
+        $user = new UserResource(User::findOrFail($user->id));
         return response()->json($user, Response::HTTP_OK);
     }
 
