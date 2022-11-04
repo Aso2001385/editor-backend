@@ -3,9 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\User;
-class ProjectFactory extends Factory
+class UserDesignFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -15,11 +14,10 @@ class ProjectFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => User::factory(),
-            'name' => Str::random(10),
-
-
             //
+            'user_id'=> rand(1,10),
+            'design_id'=> User::factory()
+
         ];
     }
 }

@@ -3,9 +3,9 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
-use App\Models\User;
-class ProjectFactory extends Factory
+use App\Models\Project;
+use App\Models\Design;
+class ProjectDesignFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -15,11 +15,10 @@ class ProjectFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => User::factory(),
-            'name' => Str::random(10),
-
-
-            //
+        //
+        'project_id'=>Project::factory(),
+        'design_id'=>Design::factory(),
+        'class'=>rand(1,9)
         ];
     }
 }
