@@ -3,10 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Models\Project;
-use App\Models\Design;
 
-class UserResource extends JsonResource
+class DesignResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,13 +16,13 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'user_id' => $this->user_id,
             'name' => $this->name,
-            'email' => $this->email,
             'point' => $this->point,
+            'contents' => $this->contents,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'projects' => new ProjectCollection($this->projects),
-            'designs' => new DesignCollection($this->designs)
         ];
     }
 }
