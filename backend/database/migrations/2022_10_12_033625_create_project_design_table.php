@@ -17,6 +17,7 @@ class CreateProjectDesignTable extends Migration
             $table->id();
             $table->foreignId('project_id')->constrained('projects');
             $table->foreignId('design_id')->constrained('designs');
+            $table->unique(['project_id', 'design_id']);
             $table->integer('class')->default(1);
             $table->timestamps();
             $table->softDeletes();

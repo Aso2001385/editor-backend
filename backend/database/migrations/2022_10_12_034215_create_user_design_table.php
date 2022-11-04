@@ -17,6 +17,7 @@ class CreateUserDesignTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('design_id')->constrained('designs');
+            $table->unique(['user_id', 'design_id']);
             $table->timestamps();
             $table->softDeletes();
         });

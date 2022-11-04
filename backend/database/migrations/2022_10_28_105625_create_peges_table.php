@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProjectUserTable extends Migration
+class CreatePegesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,14 @@ class CreateProjectUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('project_user', function (Blueprint $table) {
-            $table->id();
+        Schema::create('peges', function (Blueprint $table) {
             $table->foreignId('project_id')->constrained('projects');
+            $table->integer('number');
             $table->foreignId('user_id')->constrained('users');
-            $table->unique(['project_id', 'user_id']);
+            $table->foreignId('design_id')->constrained('designs');
+            $table->string('title', 50)->nullable();
+		    $table->text('contents')->nullable();
+            $table->unique(['project_id', 'number']);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +33,6 @@ class CreateProjectUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_user');
+        Schema::dropIfExists('peges');
     }
 }
