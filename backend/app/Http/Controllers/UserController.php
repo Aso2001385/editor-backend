@@ -94,19 +94,16 @@ class UserController extends Controller
     public function search(Request $request)
     {
         try {
-            if (strlen($request['id']) > 0 && strlen($request['email']) > 0 && strlen($request['name']) > 0) {
-                $users['users'] = User::where('id', '=', $request['id'])->where('email', 'LIKE', '%' . $request['email'] . '%')->where('name', 'LIKE', '%' . $request['name'] . '%')->get();
-            } else if (strlen($request['email']) > 0 && strlen($request['name']) > 0) {
-                $users['users'] = User::where('email', 'LIKE', '%' . $request['email'] . '%')->where('name', 'LIKE', '%' . $request['name'] . '%')->get();
-            } else if (strlen($request['id']) > 0) {
-                $users['users'] = User::find($request['id'])->get();
-            } else if (strlen($request['email']) > 0) {
-                $users['users'] = User::where('email', 'LIKE', '%' . $request['email'] . '%')->get();
-            } else if (strlen($request['name']) > 0) {
-                $users['users'] = User::where('name', 'LIKE', '%' . $request['name'] . '%')->get();
-            }
+            $id = User::where('id', '=', $request['id']);
+            $email = User::where('email', 'LIKE', '%' . $request['email'] . '%');
+            $name = User::where('name', '=',  $request['name']);
 
-            $users['count'] = count($users['users']);
+            $users['users']['id'] = $id->get();
+            $users['users']['email'] = $email->get();
+            $users['users']['name'] = $name->get();
+
+
+            $users['count'] = count($users['users']['id']) + count($users['users']['email']) + count($users['users']['name']);
         } catch (Exception $e) {
             return response()->json($e, $e->getCode());
         }
