@@ -70,10 +70,12 @@ class UserController extends Controller
         return response()->json($user, Response::HTTP_OK);
     }
 
-    public function passUpdate(Request $request)
+    public function passwordUpdate(Request $request)
     {
+        $user = User::findOrFail($request['id']);
+        $user['password'] = Hash::make($request['new_password']);
+        $user->save();
         $result = true;
-
         return response()->json($result, Response::HTTP_OK);
     }
 
