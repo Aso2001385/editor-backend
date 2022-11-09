@@ -2,188 +2,1098 @@ openapi: 3.1.0
 x-stoplight:
   id: foltdh5qgfknu
 info:
-  title: api
-  version: "1.0"
+  title: Jason
+  version: '3.1'
+  summary: markdownを使ったホームページエディタ.
+  description: ''
 servers:
-  - url: "http://localhost:3000"
+  - url: 'http://localhost:8080/api'
+    description: localhost
 paths:
-  "/users/{userId}":
+  /users:
+    post:
+      summary: User登録
+      operationId: post-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                example:
+                  value:
+                    id: 1
+                    name: 翔
+                    email: 2001195@s.asojuku.ac.jp
+                    password: AsoΣ2001195
+                    point: 500
+      tags:
+        - create
+        - Users
+        - Paths
+      description: ユーザー登録
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 翔
+                  minLength: 1
+                  maxLength: 50
+                email:
+                  type: string
+                  example: 2001195@s.asojuku.ac.jp
+                  minLength: 1
+                  maxLength: 50
+                password:
+                  type: string
+                  format: password
+                  example: AsoΣ2001195
+                  maxLength: 30
+                  minLength: 8
+              required:
+                - name
+                - email
+                - password
+            examples:
+              example:
+                value:
+                  name: 翔
+                  email: 2001195@s.asojuku.ac.jp
+                  password: AsoΣ2001195
+    get:
+      summary: User一覧
+      operationId: get-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                x-examples:
+                  example-1:
+                    - id: 1
+                      class: 1
+                      name: 翔
+                      email: 2001195@s.asojuku.ac.jp
+                      password: Aso2001195
+                      point: 500
+                    - id: 2
+                      class: 0
+                      name: メシア
+                      email: 2001196@s.asojuku.ac.jp
+                      password: Aso2001196
+                      point: 100
+                items:
+                  $ref: '#/components/schemas/User'
+              examples:
+                example:
+                  value:
+                    - id: 1
+                      name: 翔
+                      email: 2001195@s.asojuku.ac.jp
+                      point: 500
+      description: ユーザー全件取得。
+      tags:
+        - Paths
+        - User
+        - index
+  '/users/{id}':
     parameters:
       - schema:
           type: integer
-        name: userId
+        name: id
         in: path
         required: true
-        description: Id of an existing user.
+        description: user_id
     get:
-      summary: Get User Info by User ID
+      summary: User情報取得
+      tags:
+        - show
+        - User
+        - Paths
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  example-1:
+                    id: 1
+                    class: 1
+                    name: 翔
+                    email: 2001195@s.asojuku.ac.jp
+                    password: Aso2001195
+                    point: 500
+                    project:
+                      id: 1
+                      user_id: 1
+                      name: Project1
+                      fike_code: abcdefg
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  project:
+                    $ref: '#/components/schemas/Project'
+              examples:
+                example:
+                  value:
+                    user:
+                      id: 1
+                      name: 翔
+                      email: 2001195@s.asojuku.ac.jp
+                      point: 500
+                    project:
+                      id: 1
+                      user_id: 1
+                      name: Project1
+      operationId: get-users-id
+      description: |-
+        特定idのユーザー情報を取得
+        プロジェクトはプロジェクトユーザーテーブルからもってく
+    put:
+      summary: User情報編集
+      operationId: put-users-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                example:
+                  value:
+                    id: 1
+                    name: 翔
+                    email: 2001195@s.asojuku.ac.jp
+                    point: 500
+      description: 特定idのユーザー情報を編集
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                class:
+                  type: integer
+                  minimum: 0
+                  maximum: 1
+                  default: 1
+                name:
+                  type: string
+                  example: 翔
+                  minLength: 1
+                  maxLength: 50
+                email:
+                  type: string
+                  example: 2001195@s.asojuku.ac.jp
+                  format: email
+                  minLength: 1
+                  maxLength: 50
+              required:
+                - name
+                - email
+            examples:
+              example:
+                value:
+                  class: 1
+                  name: 翔
+                  email: 2001195@s.asojuku.ac.jp
+      tags:
+        - Paths
+        - update
+        - User
+    delete:
+      summary: User情報削除
+      operationId: delete-users-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+              examples:
+                example:
+                  value:
+                    result: true
+      description: '  特定idのユーザー情報を論理削除'
+      tags:
+        - delete
+        - User
+        - Paths
+  /users/password:
+    put:
+      summary: User　パスワード変更
+      operationId: put-users-password
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+              examples:
+                example:
+                  value:
+                    result: true
+      description: '  userのパスワード変更'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                  minimum: 1
+                  maximum: 255
+                old_password:
+                  type: string
+                  format: password
+                  example: AsoΣ2001195
+                  minLength: 8
+                  maxLength: 30
+                new_password:
+                  type: string
+                  example: AsoΣ2001195
+                  minLength: 8
+                  maxLength: 30
+                  format: password
+              required:
+                - id
+                - old_password
+                - new_password
+            examples:
+              example:
+                value:
+                  id: 1
+                  old_password: AsoΣ2001195
+                  new_password: AsoΣ2001195
+      tags:
+        - update
+        - User
+        - Paths
+  /login:
+    post:
+      summary: Login
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                example:
+                  value:
+                    id: 1
+                    name: 翔
+                    email: 2001195@s.asojuku.ac.jp
+                    point: 500
+      description: ログイン機能
+      tags:
+        - Login
+        - User
+        - Paths
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: 2001195@s.asojuku.ac.jp
+                  minLength: 1
+                  maxLength: 50
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 30
+                  example: AsoΣ2001195
+            examples:
+              example:
+                value:
+                  email: 2001195@s.asojuku.ac.jp
+                  password: AsoΣ2001195
+  /users/search:
+    post:
+      summary: User　検索
+      operationId: post-users-search
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  example-1:
+                    id: 1
+                    name: 翔
+                    email: 2001195@s.asojuku.ac.jp
+                properties:
+                  name:
+                    type: string
+                    example: 翔
+                    minLength: 1
+                    maxLength: 50
+                  email:
+                    type: string
+                    example: 2001195@s.asojuku.ac.jp
+                    minLength: 1
+                    maxLength: 50
+              examples:
+                example:
+                  value:
+                    name: 翔
+                    email: 2001195@s.asojuku.ac.jp
+      description: ユーザー検索
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                example-1:
+                  id: 1
+                  name: 翔
+                  email: 2001195@s.asojuku.ac.jp
+              properties:
+                id:
+                  type:
+                    - string
+                    - 'null'
+                  example: '1'
+                name:
+                  type:
+                    - string
+                    - 'null'
+                  example: 翔
+                  maxLength: 50
+                  minLength: 0
+                email:
+                  type:
+                    - string
+                    - 'null'
+                  example: 2001195@s.asojuku.ac.jp
+                  maxLength: 50
+                  minLength: 0
+            examples:
+              example:
+                value:
+                  id: '1'
+                  name: 翔
+                  email: 2001195@s.asojuku.ac.jp
+              example-1:
+                value:
+                  id: null
+                  name: 翔
+                  email: 2001195@s.asojuku.ac.jp
+              example-2:
+                value:
+                  id: '1'
+                  name: null
+                  email: 2001195@s.asojuku.ac.jp
+              example-3:
+                value:
+                  id: '1'
+                  name: 翔
+                  email: null
+      tags:
+        - Search
+        - User
+        - Paths
+  /projects:
+    get:
+      summary: Project一覧取得
+      tags:
+        - index
+        - Project
+        - Paths
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+              examples:
+                example:
+                  value:
+                    - id: 1
+                      user_id: 1
+                      name: Project1
+      operationId: get-projects
+      description: プロジェクト全件表示
+    post:
+      summary: Project作成
+      operationId: post-projects
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+              examples:
+                example:
+                  value:
+                    id: 1
+                    user_id: 1
+                    name: Project1
+      description: プロジェクト作成
+      tags:
+        - create
+        - Projects
+        - Paths
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  format: int64
+                  example: 1
+                  minimum: 1
+                  maximum: 255
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                  example: Project1
+              required:
+                - user_id
+                - name
+            examples:
+              example:
+                value:
+                  user_id: 1
+                  name: Project1
+  '/projects/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Project情報取得
+      tags:
+        - Paths
+        - show
+        - Project
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  example-1:
+                    project:
+                      id: 1
+                      user_id: 1
+                      name: Project1
+                      fike_code: abcdefg
+                    project_design:
+                      id: 1
+                      project_id: 1
+                      design_id: 1
+                      class: 1
+                properties:
+                  project:
+                    $ref: '#/components/schemas/Project'
+                  project_design:
+                    $ref: '#/components/schemas/ProjectDesign'
+              examples:
+                example-1:
+                  value:
+                    project:
+                      id: 1
+                      user_id: 1
+                      name: Project1
+                    project_design:
+                      id: 1
+                      project_id: 1
+                      design_id: 1
+                      class: 1
+      operationId: get-project-id
+      description: 特定idのプロジェクト情報を取得
+    put:
+      summary: Project情報更新
+      operationId: put-project-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+              examples:
+                example:
+                  value:
+                    id: 1
+                    user_id: 1
+                    name: Project1
+      description: 特定idのプロジェクト情報を編集
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 50
+                  minLength: 1
+                  example: design1
+            examples:
+              example:
+                value:
+                  name: design1
+      tags:
+        - Project
+        - update
+        - Paths
+    delete:
+      summary: Project情報削除
+      operationId: delete-project-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+              examples:
+                example:
+                  value:
+                    result: true
+      description: 特定idのプロジェクト情報を論理削除
+      tags:
+        - delete
+        - Project
+        - Paths
+  '/projects/{id}/copy':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Project複製
+      operationId: post-projects-id-copy
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+              examples:
+                example:
+                  value:
+                    id: 1
+                    user_id: 1
+                    name: Project1
+      description: 特定idのプロジェクト情報を複製
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: project1-copy
+                  minLength: 1
+                  maxLength: 50
+            examples:
+              example:
+                value:
+                  name: project1-copy
+      tags:
+        - Paths
+        - Project
+        - copy
+  '/projects/{id}/save':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    put:
+      summary: Project保存
+      operationId: put-projects-id-save
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+              examples:
+                example:
+                  value:
+                    result: true
+      description: |-
+        プロジェクト内容を保存
+
+        おきのどくですが
+        ぼうけんのしょ１ばんは
+        きえてしまいました.
+      tags:
+        - Paths
+        - Project
+        - save
+  /designs:
+    get:
+      summary: Design一覧
+      tags:
+        - Design
+        - Paths
+        - index
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Design'
+              examples:
+                example:
+                  value:
+                    - id: 1
+                      user_id: 1
+                      name: design1
+      operationId: get-designs
+      description: デザイン全件表示
+    post:
+      summary: Design作成
+      operationId: post-designs
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Design'
+              examples:
+                example:
+                  value:
+                    id: 1
+                    user_id: 1
+                    name: design1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                  example: design1
+                point:
+                  type: integer
+                  minimum: 0
+                  maximum: 500
+                  example: 5
+            examples:
+              example:
+                value:
+                  name: design1
+                  point: 5
+      description: デザイン作成
+      tags:
+        - Design
+        - Paths
+        - create
+  '/designs/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Design情報取得
       tags: []
       responses:
-        "200":
-          description: User Found
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/Design'
               examples:
-                Get User Alice Smith:
+                example:
                   value:
-                    id: 142
-                    firstName: Alice
-                    lastName: Smith
-                    email: alice.smith@gmail.com
-                    dateOfBirth: "1997-10-31"
-                    emailVerified: true
-                    signUpDate: "2019-08-24"
-        "404":
-          description: User Not Found
-      operationId: get-users-userId
-      description: Retrieve the information of the user with the matching user ID.
-    patch:
-      summary: Update User Information
-      operationId: patch-users-userId
+                    id: 1
+                    user_id: 1
+                    name: design1
+      operationId: get-designs-id
+      description: 特定idのデザイン情報を取得
+    put:
+      summary: Design情報更新
+      operationId: put-designs-id
       responses:
-        "200":
-          description: User Updated
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/Design'
               examples:
-                Updated User Rebecca Baker:
+                example:
                   value:
-                    id: 13
-                    firstName: Rebecca
-                    lastName: Baker
-                    email: rebecca@gmail.com
-                    dateOfBirth: "1985-10-02"
-                    emailVerified: false
-                    createDate: "2019-08-24"
-        "404":
-          description: User Not Found
-        "409":
-          description: Email Already Taken
-      description: Update the information of an existing user.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                email:
-                  type: string
-                  description: "If a new email is given, the user's email verified property will be set to false."
-                dateOfBirth:
-                  type: string
-            examples:
-              Update First Name:
-                value:
-                  firstName: Rebecca
-              Update Email:
-                value:
-                  email: rebecca@gmail.com
-              Update Last Name & Date of Birth:
-                value:
-                  lastName: Baker
-                  dateOfBirth: "1985-10-02"
-        description: Patch user properties to update.
-  /user:
-    post:
-      summary: Create New User
-      operationId: post-user
+                    id: 1
+                    user_id: 1
+                    name: design1
+      description: 特定idのデザイン情報を編集
+    delete:
+      summary: Design情報削除
+      operationId: delete-designs-id
       responses:
-        "200":
-          description: User Created
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                type: object
+                properties:
+                  result:
+                    type: boolean
               examples:
-                New User Bob Fellow:
+                example-1:
                   value:
-                    id: 12
-                    firstName: Bob
-                    lastName: Fellow
-                    email: bob.fellow@gmail.com
-                    dateOfBirth: "1996-08-24"
-                    emailVerified: false
-                    createDate: "2020-11-18"
-        "400":
-          description: Missing Required Information
-        "409":
-          description: Email Already Taken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                email:
-                  type: string
-                dateOfBirth:
-                  type: string
-                  format: date
-              required:
-                - firstName
-                - lastName
-                - email
-                - dateOfBirth
-            examples:
-              Create User Bob Fellow:
-                value:
-                  firstName: Bob
-                  lastName: Fellow
-                  email: bob.fellow@gmail.com
-                  dateOfBirth: "1996-08-24"
-        description: Post the necessary fields for the API to create a new user.
-      description: Create a new user.
+                    result: true
+      description: 特定idのデザイン情報を論理削除
+  '/designs/{id}/buy':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Design購入
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Design'
+              examples:
+                example:
+                  value:
+                    id: 1
+                    user_id: 1
+                    name: design1
+      operationId: get-designs-buy-id
+      description: デザインを購入
+  /designs/gacha:
+    get:
+      summary: Designガチャ
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Design'
+              examples:
+                example:
+                  value:
+                    id: 1
+                    user_id: 1
+                    name: design1
+      operationId: get-designs-gacha
+      description: ガチャァァァ!!　10連ガチャァ!!　いっぱいいっぱい回すのぉぉ!!　溶けるぅ!!　溶けちゃうう!!
 components:
   schemas:
     User:
       title: User
+      x-stoplight:
+        id: dyla04j3g950s
       type: object
-      description: ""
       examples:
-        - id: 142
-          firstName: Alice
-          lastName: Smith
-          email: alice.smith@gmail.com
-          dateOfBirth: "1997-10-31"
-          emailVerified: true
-          signUpDate: "2019-08-24"
+        - id: 1
+          name: 翔
+          email: 2001195@s.asojuku.ac.jp
+          point: 500
+      description: ユーザーモデル
+      x-tags:
+        - Model
+        - User
       properties:
         id:
           type: integer
-          description: Unique identifier for the given user.
-        firstName:
+          format: int64
+          minimum: 1
+          maximum: 255
+        name:
           type: string
-        lastName:
-          type: string
+          maxLength: 50
+          minLength: 1
+          example: 翔
         email:
           type: string
           format: email
-        dateOfBirth:
-          type: string
-          format: date
-          example: "1997-10-31"
-        emailVerified:
-          type: boolean
-          description: Set to true if the user's email has been verified.
-        createDate:
-          type: string
-          format: date
-          description: The date that the user was created.
+          example: 2001195@s.asojuku.ac.jp
+          maxLength: 50
+          minLength: 1
+        point:
+          type: integer
+          format: int32
+          example: 500
+          minimum: 1
+          maximum: 50000
+          default: 500
       required:
         - id
-        - firstName
-        - lastName
+        - name
         - email
-        - emailVerified
+        - point
+    Project:
+      title: Project
+      x-stoplight:
+        id: op4kaidt3w1ms
+      type: object
+      x-tags:
+        - Model
+        - Project
+      examples:
+        - id: 1
+          user_id: 1
+          name: Project1
+      description: プロジェクトモデル
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+        name:
+          type: string
+          example: Project1
+          minLength: 1
+          maxLength: 50
+      required:
+        - id
+        - user_id
+        - name
+    Design:
+      title: Design
+      x-stoplight:
+        id: turqptaevpqtg
+      type: object
+      examples:
+        - id: 1
+          user_id: 1
+          name: design1
+      x-tags:
+        - Model
+        - Design
+      description: デザインモデル
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 255
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+        name:
+          type: string
+          maxLength: 50
+          minLength: 1
+          example: design1
+    ProjectDesign:
+      title: ProjectDesign
+      x-stoplight:
+        id: 5qalg09797izs
+      type: object
+      x-tags:
+        - Model
+        - Project
+        - ProjectDesign
+        - Design
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 255
+          example: 1
+        project_id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+        design_id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+        class:
+          type: integer
+          format: int32
+          example: 1
+          default: 1
+          minimum: 1
+          maximum: 9
+      examples:
+        - id: 1
+          project_id: 1
+          design_id: 1
+          class: 1
+      description: プロジェットデザインモデル
+    UserDesign:
+      title: UserDesign
+      x-stoplight:
+        id: 6xayu7fjadqvj
+      type: object
+      x-tags:
+        - Model
+        - User
+        - UserDesign
+        - Design
+      properties:
+        id:
+          type: integer
+          example: 1
+          format: int64
+          minimum: 1
+          maximum: 255
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+        design_id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+      examples:
+        - id: 1
+          user_id: 1
+          design_id: 1
+      description: ユーザーデザインモデル
+    ProjectUser:
+      title: ProjectUser
+      x-stoplight:
+        id: vqb2e2cbzk5ud
+      type: object
+      x-tags:
+        - Model
+        - Project
+        - ProjectUser
+        - User
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+        project_id:
+          type: integer
+          example: 1
+          minimum: 1
+          maximum: 255
+          format: int64
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+      examples:
+        - id: 1
+          project_id: 1
+          user_id: 1
+      description: プロジェクトユーザーモデル
+    GachaSetting:
+      title: GachaSetting
+      x-stoplight:
+        id: g86g88d2euepy
+      type: object
+      description: ガチャセッティングテーブル
+      x-tags:
+        - GachaSetting
+        - Model
+      examples:
+        - id: 1
+          user_id: 1
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+          maximum: 255
+tags:
+  - name: Model
+  - name: Paths
