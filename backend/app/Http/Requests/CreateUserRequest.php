@@ -4,11 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Exceptions\HttpResponseException; 
 use Illuminate\Http\Response;
 
 
-class CreateUserRequest extends FormRequest
+class UserRegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,11 +28,9 @@ class CreateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required|string|max:50'],
+            'name' => 'required|string|max:50',
             'email' => ['required','email','max:50','unique:users'],
             'password' => ['required','string','min:8','max:60','regex:/(?=.*[a-z)(?=.*[A-Z])(?=.*[0-9])(?=.*[\/\-\_ΔΣΩ])[a-zA-Z0-9]/'],
-            'point' => ['min:1','max:50000','integer'],
-
         ];
     }
 
@@ -49,8 +47,7 @@ class CreateUserRequest extends FormRequest
             'password.min' => 'パスワードが8文字以上ではありません',
             'password.max' => '60文字以内で入力してください',
             'password.regex' => 'パスワードが適切ではありません',
-            'point.integer' => '数値で入力してください'
-        ];
+            ];
     }
 
     protected function failevalidation(Validator $validator)

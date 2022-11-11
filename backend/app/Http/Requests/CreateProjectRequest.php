@@ -4,10 +4,12 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Exceptions\HttpResponseException; 
 use Illuminate\Http\Response;
 
-class CreateProjectRequest extends FormRequest
+
+
+class ProjectCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,13 +29,16 @@ class CreateProjectRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required','max:50'],
+            'user_id' => ['required','integer'],
+            'name' => ['required','string','max:50'],
         ];
     }
 
     public function messages()
     {
         return[
+            'user_id.required' => 'ユーザーIDが入力されていません',
+            'user_id.integer' => '整数で入力してください',
             'name.required' => 'プロジェクト名を記入してください',
             'name.max' => '50文字以内で入力してください',
         ];
