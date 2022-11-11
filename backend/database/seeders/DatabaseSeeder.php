@@ -15,19 +15,22 @@ class DatabaseSeeder extends Seeder
      * @return void
      */
     public function run() {
-    $user = User::factory(5)
-    ->has(Project::factory()->count(3))
-    ->create();
+  // $user = User::factory(5)
+  // ->has(Project::factory()->count(3))
+   //->create();
+
+  // $user = User::factory(5)
+  // ->has(Design::factory()->count(3))
+  // ->create();
 
     $user = User::factory(5)
+    ->has(Project::factory()
+    ->has(Design::factory()->count(3)))
+    ->create();
+
+    $project = User::factory(5)
     ->has(Design::factory()->count(3))
     ->create();
 
-    $project = project::factory(5)
-    ->has(Design::factory()->count(3))
-    ->create();
-
-
-
-        }
+    }
 }
