@@ -24,13 +24,17 @@ class DatabaseSeeder extends Seeder
   // ->create();
 
     $user = User::factory(5)
-    ->has(Project::factory()
-    ->has(Design::factory()->count(3)))
-    ->create();
+    ->has(Project::factory(2)
+    ->state(
+        function(array $attributes,User $user){
+            return ['users'=> $user->type];
+        }
+    )
+    )->create();
 
-    $project = User::factory(5)
-    ->has(Design::factory()->count(3))
-    ->create();
+   // $user = User::factory(5)
+  //  ->has(Design::factory()->count(2))
+  //  ->create();
 
     }
 }
