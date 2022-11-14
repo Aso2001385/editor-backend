@@ -28,6 +28,7 @@ class UserSearchRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => ['nullable','string'],
             'name' => ['nullable','string','max:50'],
             'email' => ['nullable','email','max:50'],
         ];
@@ -36,7 +37,6 @@ class UserSearchRequest extends FormRequest
     public function messages()
     {
         return[
-            'name.stirng' => '文字列ではありません',
             'name.max' => '50文字以内で入力してください',
             'email.email' => '有効なメールアドレスではありません',
             'email.max' => '50文字以内で入力してください'
