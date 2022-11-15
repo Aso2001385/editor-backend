@@ -8,6 +8,9 @@ use app\Models\Project;
 use app\Models\ProjectUser;
 use app\Models\ProjectDesign;
 use app\Models\UserDesign;
+use App\Http\Requests\CreateProjectRequest;
+use App\Http\Requests\ProjectCopyRequest;
+use App\Http\Requests\ProjectUpdateRequest;
 
 class ProjectController extends Controller
 {

@@ -10,6 +10,11 @@ use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Hashing\HashManager;
 use Illuminate\Support\Facades\Http;
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\PasswordUpdateUserRequest;
+use App\Http\Requests\UserEditRequest;
+use App\Http\Requests\UserLoginRequest;
+use App\Http\Requests\UserSearchRequest;
 
 class UserController extends Controller
 {

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Design;
 use App\Models\UserDesign;
 use Exception;
+use App\Http\Requests\CreateDesignRequest;
 
 class DesignController extends Controller
 {
