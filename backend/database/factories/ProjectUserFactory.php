@@ -15,8 +15,8 @@ class ProjectUserFactory extends Factory
     public function definition()
     {
         return [
-            'project_id'=>USER::factory(),
-            'user_id'=>Project::factory()
+            'project_id'=>Project::factory(),
+            'user_id'=>User::factory()
 
             //
         ];
