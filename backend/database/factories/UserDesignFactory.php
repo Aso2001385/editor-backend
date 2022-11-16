@@ -16,7 +16,7 @@ class UserDesignFactory extends Factory
         return [
             //
             'user_id'=> User::factory(),
-            'design_id'=> rand(1,10)
+            'design_id'=> rand(0,10)
 
         ];
     }
