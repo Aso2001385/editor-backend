@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException; 
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
 
@@ -44,7 +44,7 @@ class ProjectCopyRequest extends FormRequest
     protected function failevalidation(Validator $validator)
     {
         $response['result'] = $validator->errors()->toArray();
-        $response['status'] = $Response::HTTP_UNPROCESSABLE_ENTITY;
+        $response['status'] = Response::HTTP_UNPROCESSABLE_ENTITY;
 
         throw new HttpResponseException(
             response()->json($response['result'],$response['status'])
