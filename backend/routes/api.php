@@ -33,9 +33,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/designs/gacha', [DesignController::class, 'gacha']);
 });
 
-Route::post('login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::apiResource('users', UserController::class)->only(['store']);
 Route::apiResource('users', UserController::class)->except(['store'])->middleware('auth');
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
