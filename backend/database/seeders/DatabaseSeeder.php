@@ -42,18 +42,14 @@ class DatabaseSeeder extends Seeder
    //     }))
    // ->create();
 
-    factory(User::class,10)->create()->each(function($user){
-        factory(Project::class)->create([
-            'user_id'=>$user->id
-
+    $user = User::factory(10)->create()->each(function($user){
+    $user = Project::factory()->create([
+            'user_id'=>$user->id,
         ]);
-        factory(Design::class)->create([
+        $user = Design::factory()->create([
             'user_id'=>$user->id
-
         ]);
     });
-
-
 
 
     }
