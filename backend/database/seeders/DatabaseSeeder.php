@@ -46,9 +46,11 @@ class DatabaseSeeder extends Seeder
     $user = Project::factory()->create([
             'user_id'=>$user->id,
         ]);
+
         $user = Design::factory()->create([
             'user_id'=>$user->id
         ]);
+
     });
 
 

@@ -18,7 +18,6 @@ class Project extends Model
 
     public function designs()
     {
-    return $this->belongsToMany(Design::class,ProjectDesign::class,'project_id','design_id')
-    ->withTimestamps();
-}
+        return $this->belongsToMany(Design::class,ProjectDesign::class,'project_id','design_id')->withTimestamps();
+    }
 }
