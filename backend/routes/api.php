@@ -37,6 +37,6 @@ Route::post('login', [LoginController::class, 'login']);
 Route::apiResource('users', UserController::class)->only(['store']);
 Route::apiResource('users', UserController::class)->except(['store'])->middleware('auth');
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
