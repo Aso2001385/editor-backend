@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Design;
-
+use App\Models\ProjectDesign;
 
 class DatabaseSeeder extends Seeder
 {
@@ -42,16 +43,40 @@ class DatabaseSeeder extends Seeder
    //     }))
    // ->create();
 
-    $user = User::factory(10)->create()->each(function($user){
-    $user = Project::factory()->create([
-            'user_id'=>$user->id,
-        ]);
+    // $user = User::factory(10)->has(Project::factory())
+    // ->has(Design::factory())
+    // ->create()->each(function($user){
+    // $user = Project::factory()->create([
+    //         'user_id'=>$user->id,
+    //     ]);
 
-        $user = Design::factory()->create([
-            'user_id'=>$user->id
-        ]);
+    //     $user = Design::factory()->create([
+    //         'user_id'=>$user->id
+    //     ]);
 
-    });
+    // });
+
+        $users=User::factory(10)->create();
+
+        foreach($users as $user){
+
+            $project_info=[
+                'name'=> Str::random(5),
+                'user_id'=>$user['id']
+            ];
+            $projects=Project::create($project_info);
+
+            $design_info=[
+                'name'=>Str::random(5),
+                'user_id'=>$user['id']
+
+            ];
+            $designs=Design::create($design_info);
+
+
+
+        }
+
 
 
     }
