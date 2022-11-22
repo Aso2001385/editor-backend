@@ -41,10 +41,10 @@ class ProjectCopyRequest extends FormRequest
         ];
     }
 
-    protected function failevalidation(Validator $validator)
+    protected function failedValidation( Validator $validator )
     {
         $response['result'] = $validator->errors()->toArray();
-        $response['status'] = Response::HTTP_UNPROCESSABLE_ENTITY;
+        $response['status']=Response::HTTP_UNPROCESSABLE_ENTITY;
 
         throw new HttpResponseException(
             response()->json($response['result'],$response['status'])

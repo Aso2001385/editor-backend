@@ -31,6 +31,7 @@ class CreateProjectRequest extends FormRequest
         return [
             'user_id' => ['required','integer'],
             'name' => ['required','string','max:50'],
+            //'ui' => ['required','json']
         ];
     }
 
@@ -40,14 +41,15 @@ class CreateProjectRequest extends FormRequest
             'user_id.required' => 'ユーザーIDが入力されていません',
             'user_id.integer' => '整数で入力してください',
             'name.required' => 'プロジェクト名を記入してください',
+            'name.string' => '文字列で入力してください',
             'name.max' => '50文字以内で入力してください',
         ];
     }
 
-    protected function failevalidation(Validator $validator)
+    protected function failedValidation( Validator $validator )
     {
         $response['result'] = $validator->errors()->toArray();
-        $response['status'] = Response::HTTP_UNPROCESSABLE_ENTITY;
+        $response['status']=Response::HTTP_UNPROCESSABLE_ENTITY;
 
         throw new HttpResponseException(
             response()->json($response['result'],$response['status'])

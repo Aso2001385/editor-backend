@@ -28,13 +28,13 @@ class CreateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:50',
+            'name' => ['required','string','max:50'],
             'email' => ['required','email','max:50','unique:users'],
             'password' => ['required','string','min:8','max:60','regex:/(?=.*[a-z)(?=.*[A-Z])(?=.*[0-9])(?=.*[\/\-\_ΔΣΩ])[a-zA-Z0-9]/'],
         ];
     }
 
-    public function message()
+    public function messages()
     {
         return[
             'name.required' => '名前を入力してください',
@@ -50,10 +50,10 @@ class CreateUserRequest extends FormRequest
             ];
     }
 
-    protected function failevalidation(Validator $validator)
+    protected function failedValidation( Validator $validator )
     {
         $response['result'] = $validator->errors()->toArray();
-        $response['status'] = Response::HTTP_UNPROCESSABLE_ENTITY;
+        $response['status']=Response::HTTP_UNPROCESSABLE_ENTITY;
 
         throw new HttpResponseException(
             response()->json($response['result'],$response['status'])

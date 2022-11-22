@@ -4,7 +4,7 @@ namespace App\Rules;
 
 
 use Illuminate\Contracts\Validation\Rule;
-use App\Models\User.php;
+use App\Models\User;
 
 class PasswordUpadateRule implements Rule
 {
@@ -31,7 +31,7 @@ class PasswordUpadateRule implements Rule
         $hash = User::find($value[0],['password']);
         $check=sodium_crypto_pwhash_str_verify(string $hash,string $value[1]);
         return accepted_if($check,true);
-        }
+    }
 
     /**
      * Get the validation error message.

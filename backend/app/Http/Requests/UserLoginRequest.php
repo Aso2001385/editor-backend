@@ -28,7 +28,7 @@ class UserLoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required','email','max:50','unique:users'],
+            'email' => ['required','email','max:50'],
             'password' => ['required','string','min:8','max:60']
         ];
     }
@@ -39,7 +39,6 @@ class UserLoginRequest extends FormRequest
             'email.required' => 'メールアドレスを入力してください',
             'email.email' => '有効なメールアドレスではありません',
             'email.max' => '50文字以内で入力してください',
-            'email.unique' => '登録済みのメールアドレスです',
             'password.required' => 'パスワードを入力してください',
             'password.min' => 'パスワードが8文字以上ではありません',
             'password.max' => '60文字以内で入力してください',
@@ -47,10 +46,10 @@ class UserLoginRequest extends FormRequest
         ];
     }
 
-    protected function failevalidation(Validator $validator)
+    protected function failedValidation( Validator $validator )
     {
         $response['result'] = $validator->errors()->toArray();
-        $response['status'] = Response::HTTP_UNPROCESSABLE_ENTITY;
+        $response['status']=Response::HTTP_UNPROCESSABLE_ENTITY;
 
         throw new HttpResponseException(
             response()->json($response['result'],$response['status'])

@@ -33,7 +33,7 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateProjectRequest $request)
     {
         //
         $project = Project::create($request->all());
@@ -56,7 +56,7 @@ class ProjectController extends Controller
         return response()->json($project, Response::HTTP_OK);
     }
 
-    public function copy(Project $project)
+    public function copy(ProjectCopyRequest $project)
     {
     }
 
@@ -80,7 +80,7 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Project $project)
+    public function update(ProjectUpdateRequest $request, Project $project)
     {
         //
         $project->update($request->all());

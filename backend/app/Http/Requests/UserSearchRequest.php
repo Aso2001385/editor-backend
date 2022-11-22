@@ -28,25 +28,24 @@ class UserSearchRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => ['nullable','string'],
-            'name' => ['nullable','string','max:50'],
-            'email' => ['nullable','email','max:50'],
+            'id' => ['string'],
+            'name' => ['string','max:50'],
+            'email' => ['max:50'],
         ];
     }
 
     public function messages()
     {
         return[
-            'name.max' => '50文字以内で入力してください',
-            'email.email' => '有効なメールアドレスではありません',
-            'email.max' => '50文字以内で入力してください'
+            '*.max' => '50文字以内で入力してください',
+            '*.string'=>'文字列で入力してください',
         ];
     }
 
-    protected function failevalidation(Validator $validator)
+    protected function failedValidation( Validator $validator )
     {
         $response['result'] = $validator->errors()->toArray();
-        $response['status'] = Response::HTTP_UNPROCESSABLE_ENTITY;
+        $response['status']=Response::HTTP_UNPROCESSABLE_ENTITY;
 
         throw new HttpResponseException(
             response()->json($response['result'],$response['status'])
