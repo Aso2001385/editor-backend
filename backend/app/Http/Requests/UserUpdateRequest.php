@@ -4,11 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException; 
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
 
-class UserEditRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,7 +28,7 @@ class UserEditRequest extends FormRequest
     public function rules()
     {
         return [
-            'class' => ['integer','min:0','max:1'],
+            'class' => ['required','integer','min:0','max:1'],
             'name' => ['required','string','max:50'],
             'email' => ['required','email','max:50','unique:users'],
         ];
@@ -37,6 +37,7 @@ class UserEditRequest extends FormRequest
     public function messages()
     {
         return[
+            'class.required' => '入力してください',
             'class.integer' => '数値で入力してください',
             'class.min' => '1か0で入力してください',
             'class.max' => '1か0で入力してください',
@@ -49,10 +50,10 @@ class UserEditRequest extends FormRequest
             ];
     }
 
-    protected function failevalidation(Validator $validator)
+    protected function failedValidation( Validator $validator )
     {
         $response['result'] = $validator->errors()->toArray();
-        $response['status'] = $Response::HTTP_UNPROCESSABLE_ENTITY;
+        $response['status']=Response::HTTP_UNPROCESSABLE_ENTITY;
 
         throw new HttpResponseException(
             response()->json($response['result'],$response['status'])
