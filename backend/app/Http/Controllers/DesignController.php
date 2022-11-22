@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Design;
 use App\Models\UserDesign;
 use Exception;
+use App\Http\Requests\CreateDesignRequest;
 
 class DesignController extends Controller
 {
@@ -29,7 +30,7 @@ class DesignController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateDesignRequest $request)
     {
         //
         $design = Design::create($request->all());
