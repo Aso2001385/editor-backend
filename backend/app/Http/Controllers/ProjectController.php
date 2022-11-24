@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use app\Models\Project;
-use app\Models\ProjectUser;
-use app\Models\ProjectDesign;
-use app\Models\UserDesign;
+use App\Models\Project;
+use App\Models\ProjectUser;
+use App\Models\ProjectDesign;
+use App\Models\UserDesign;
+use App\Models\Pages;
 use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\ProjectCopyRequest;
 use App\Http\Requests\ProjectUpdateRequest;
@@ -56,8 +57,54 @@ class ProjectController extends Controller
         return response()->json($project, Response::HTTP_OK);
     }
 
-    public function copy(ProjectCopyRequest $project)
+    public function copy(Project $project,ProjectCopyRequest $request)
     {
+        $pages=Pages::where('project_id','=',$project['id'])->get();
+
+        $project_info=[
+            'user_id'=>Auth::id(),
+            'name'=>$request['name'],
+            'ui'=>$project['ui']
+        ];
+        $project=Project::create($project_info);
+
+        $project_user_info=[
+            'project_id'=>$project['id'],
+            'user_id'=>Auth::id()
+        ];
+        ProjectUser::create($project_user_info);
+
+        $user_designs=UserDesign::where('user_id','=',Auth::id())->get();
+
+        foreach($user_designs as $user_design)
+        {
+            $project_design_info=[
+                'project_id'=>$project_id,
+                'design_id'=>$user_design['design_id']
+            ];
+            ProjectDesign::create($project_design_info);
+        }
+
+        foreach($pages as $page)
+        {
+            $pages_info=[
+                'project_id'=>$project['id'],
+                'number'=>$page['number'],
+                'user_id'=>Auth::id(),
+                'design_id'=>$page['design_id'],
+                'title'=>$page['title'],
+                'contents'=>$page['contents']
+            ];
+
+            $user_design=UserDesign::where('design_id','=',$page['design_id'])->get();
+
+            if(count($user_design)==0)
+            {
+                $pages_info['design_id']=>UserDesign::where('user_id','=',Auth::id())->min('design_id');
+            }
+
+            Pages::create($pages_info);
+        }
     }
 
     /**
