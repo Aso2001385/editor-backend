@@ -26,7 +26,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::apiResource('projects', ProjectController::class);
     Route::post('projects/{id}/copy', [ProjectController::class, 'copy']);
-    Route::post('projects/{id}/save', [ProjectController::class, 'save']);
+    Route::post('projects/pages', [ProjectController::class, 'save']);
 
     Route::apiResource('designs', DesignController::class);
     Route::get('designs/{id}/buy', [DesignController::class, 'buy']);

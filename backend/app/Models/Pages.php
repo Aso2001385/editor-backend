@@ -6,17 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Project extends Model
+class Pages extends Model
 {
+    use HasFactory,softDeletes;
+
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'project_id',
+        'number',
         'user_id',
-        'name'
+        'design_id',
+        'title',
+        'contents'
     ];
-    protected $datas = ['deleted_at'];
 
-    public function pages(){
-        $this->hasMany(Pages::class);
-    }
+    protected $datas = ['deleted_at'];
 }
