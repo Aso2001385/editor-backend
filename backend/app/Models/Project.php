@@ -19,5 +19,9 @@ class Project extends Model
     public function designs()
     {
         return $this->belongsToMany(Design::class,ProjectDesign::class,'project_id','design_id')->withTimestamps();
+
+    public function pages(){
+        $this->hasMany(Pages::class);
+
     }
 }
