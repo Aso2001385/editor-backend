@@ -6,7 +6,11 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Design;
-use App\Models\ProjectDesign;
+use App\Models\Projectuser;
+use App\Models\Projectdesign;
+use App\Models\Userdesign;
+
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,14 +21,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run() {
 
-   // $user = User::factory(5)
+  //  $user = User::factory(5)
    // ->has(Project::factory(3)
-   // ->has(Design::factory(3)),'projects','designs')
-    //->create();
+  //  ->has(Design::factory(3)),'projects','designs')
+  //  ->create();
 
-    // $user = User::factory(5)
-    // ->has(Design::factory(3),'designs')
-    // ->create();
+  //  $user = User::factory(5)
+   //  ->has(Design::factory(3),'designs')
+   //  ->create();
 
  //   $user = User::factory(5)
   //  ->has(Project::factory(3)
@@ -62,22 +66,39 @@ class DatabaseSeeder extends Seeder
 
             $project_info=[
                 'name'=> Str::random(5),
-                'user_id'=>$user['id']
+                'user_id'=>$user['id'],
+                'ui'=>Str::random(10)
             ];
             $projects=Project::create($project_info);
 
             $design_info=[
                 'name'=>Str::random(5),
-                'user_id'=>$user['id']
+                'user_id'=>$user['id'],
+                'point'=>rand(0,3)
 
             ];
             $designs=Design::create($design_info);
 
+            $projectuser_info=[
+                'project_id'=>$projects['id'],
+                'user_id'=>$user['id']
 
+            ];
+            $projectusers=Projectuser::create($projectuser_info);
 
+            $projectdesign_info=[
+                'project_id'=>$projects['id'],
+                'design_id'=>$designs['id'],
+                'class'=>1
+            ];
+            $projectdesigns=Projectdesign::create($projectdesign_info);
+
+            $userdesign_info=[
+                'user_id'=>$users['id'],
+                'design_id'=>$designs['id'],
+            ];
+            $userdesigns=Userdesign::create($userdesign_info);
         }
-
-
 
     }
 }

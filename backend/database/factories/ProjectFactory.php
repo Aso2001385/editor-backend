@@ -17,9 +17,12 @@ class ProjectFactory extends Factory
         return [
             'user_id' => User::factory(),
             'name' => Str::random(10),
-
-
-            //
+            'ui' => [
+                'name' => Str::random(10),
+                'kana' => Str::random(10),
+                'address' => Str::random(10),
+                'email' => Str::random(10)
+            ]
         ];
     }
 }
