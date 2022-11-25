@@ -38,6 +38,7 @@ class ProjectController extends Controller
     {
         //
         $project = Project::create($request->all());
+
         $project_user_info = [
             'project_id' => $project['id'],
             'user_id' => $project['user_id']
@@ -100,11 +101,18 @@ class ProjectController extends Controller
 
             if(count($user_design)==0)
             {
-                $pages_info['design_id']=>UserDesign::where('user_id','=',Auth::id())->min('design_id');
+                $pages_info['design_id']=UserDesign::where('user_id','=',Auth::id())->min('design_id');
             }
 
             Pages::create($pages_info);
         }
+        return response()->json($project, Response::HTTP_OK);
+    }
+
+    public function save(Request $request)
+    {
+        $page=Pages::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request);
+        return response()->json($page, Response::HTTP_OK);
     }
 
     /**
@@ -116,7 +124,8 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         //
-
+        $project['count']=count(Page::where('project_id','=',$project['id'])->get());
+        $project['last_update']=Page::where('project_id','=',$project['id'])->where('updated_at', Pages::max('updated_at'))->first();
         return response()->json($project, Response::HTTP_OK);
     }
 
