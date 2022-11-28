@@ -9,6 +9,16 @@ use App\Http\Requests\UserLoginRequest;
 
 class LoginController extends Controller
 {
+
+    public function testGet(Request $request){
+        return response()->json(Auth::user()->name,200);
+    }
+
+
+    public function testPost(Request $request){
+        return response()->json($request,200);
+    }
+
     public function login(UserLoginRequest $request)
     {
         if (Auth::attempt($request->toArray())) {
