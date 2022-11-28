@@ -66,6 +66,7 @@ paths:
                   name: 翔
                   email: 2001195@s.asojuku.ac.jp
                   password: AsoΣ2001195
+        description: ''
     get:
       summary: User一覧
       operationId: get-users
@@ -99,11 +100,14 @@ paths:
                       name: 翔
                       email: 2001195@s.asojuku.ac.jp
                       point: 500
+          headers: {}
       description: ユーザー全件取得。
       tags:
         - Paths
         - User
         - index
+      parameters: []
+    parameters: []
   '/users/{id}':
     parameters:
       - schema:
@@ -308,6 +312,7 @@ paths:
                     name: 翔
                     email: 2001195@s.asojuku.ac.jp
                     point: 500
+          headers: {}
       description: ログイン機能
       tags:
         - Login
@@ -335,6 +340,15 @@ paths:
                 value:
                   email: 2001195@s.asojuku.ac.jp
                   password: AsoΣ2001195
+      parameters: []
+  /logout:
+    post:
+      summary: Logout
+      operationId: post-logout
+      responses:
+        '200':
+          description: OK
+      description: ''
   /users/search:
     post:
       summary: User　検索
@@ -445,6 +459,7 @@ paths:
                     - id: 1
                       user_id: 1
                       name: Project1
+                      ui: {}
       operationId: get-projects
       description: プロジェクト全件表示
     post:
@@ -485,14 +500,31 @@ paths:
                   minLength: 1
                   maxLength: 50
                   example: Project1
+                ui:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: ui-name
+                    updated_date:
+                      type: string
+                      format: date
+                      example: '2010-12-01 12:02:00'
               required:
                 - user_id
                 - name
             examples:
-              example:
+              example-1:
                 value:
                   user_id: 1
                   name: Project1
+                  ui:
+                    id: 1
+                    name: ui-name
+                    updated_date: '2010-12-01 12:02:00'
   '/projects/{id}':
     parameters:
       - schema:
@@ -531,12 +563,13 @@ paths:
                   project_design:
                     $ref: '#/components/schemas/ProjectDesign'
               examples:
-                example-1:
+                example:
                   value:
                     project:
                       id: 1
                       user_id: 1
                       name: Project1
+                      ui: {}
                     project_design:
                       id: 1
                       project_id: 1
@@ -560,6 +593,7 @@ paths:
                     id: 1
                     user_id: 1
                     name: Project1
+                    ui: {}
       description: 特定idのプロジェクト情報を編集
       requestBody:
         content:
@@ -645,15 +679,10 @@ paths:
         - Paths
         - Project
         - copy
-  '/projects/{id}/save':
-    parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
+  /projects/pages:
+    parameters: []
     put:
-      summary: Project保存
+      summary: Projectのページ保存
       operationId: put-projects-id-save
       responses:
         '200':
@@ -670,7 +699,7 @@ paths:
                   value:
                     result: true
       description: |-
-        プロジェクト内容を保存
+        プロジェクト内の各ページ内容を保存
 
         おきのどくですが
         ぼうけんのしょ１ばんは
@@ -679,6 +708,38 @@ paths:
         - Paths
         - Project
         - save
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type: integer
+                  format: int64
+                  example: 1
+                number:
+                  type: integer
+                  format: int32
+                  example: 1
+                design_id:
+                  type: integer
+                  format: int64
+                  example: 1
+                title:
+                  type: string
+                  maxLength: 50
+                  minLength: 1
+                contents:
+                  type: string
+                  format: text
+                  maxLength: 1024
+              required:
+                - project_id
+                - number
+                - design_id
+                - title
+                - contents
   /designs:
     get:
       summary: Design一覧
@@ -735,6 +796,17 @@ paths:
                   minimum: 0
                   maximum: 500
                   example: 5
+                contents:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    updated_at:
+                      type: string
+                      format: date-time
+                      example: '2010-12-01 12:02:00'
             examples:
               example:
                 value:
@@ -906,6 +978,7 @@ components:
         - id: 1
           user_id: 1
           name: Project1
+          ui: {}
       description: プロジェクトモデル
       properties:
         id:
@@ -925,10 +998,50 @@ components:
           example: Project1
           minLength: 1
           maxLength: 50
+        ui:
+          type: object
       required:
         - id
         - user_id
         - name
+    Pages:
+      title: Pages
+      x-stoplight:
+        id: tp78ipwn62m0r
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          example: 1
+        number:
+          type: integer
+          example: 1
+          format: int32
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        design_id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: 小泉構文
+          maxLength: 50
+        contents:
+          type: string
+          format: text
+          example: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
+          maxLength: 1024
+      examples:
+        - project_id: 1
+          number: 1
+          user_id: 1
+          design_id: 1
+          title: 小泉構文
+          contents: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
     Design:
       title: Design
       x-stoplight:
@@ -938,6 +1051,8 @@ components:
         - id: 1
           user_id: 1
           name: design1
+          point: 50
+          contents: {}
       x-tags:
         - Model
         - Design
@@ -959,6 +1074,13 @@ components:
           maxLength: 50
           minLength: 1
           example: design1
+        point:
+          type: integer
+          format: int32
+          default: 0
+          example: 50
+        contents:
+          type: object
     ProjectDesign:
       title: ProjectDesign
       x-stoplight:
@@ -1081,6 +1203,7 @@ components:
       examples:
         - id: 1
           user_id: 1
+          setting: {}
       properties:
         id:
           type: integer
@@ -1094,6 +1217,8 @@ components:
           example: 1
           minimum: 1
           maximum: 255
+        setting:
+          type: object
 tags:
   - name: Model
   - name: Paths
