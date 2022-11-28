@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -35,41 +34,8 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->renderable(function (HttpException $e, $request) {
-            if ($request->is('api/*')) {
-                $result = '';
-
-                switch ($e->getCode()) {
-                    case 400:
-                        $result = __('Bad Request');
-                        break;
-                    case 401:
-                        $result = __('Unauthorized');
-                        break;
-                    case 403:
-                        $result = __('Forbidden');
-                        break;
-                    case 404:
-                        $result = __('Not Found');
-                        break;
-                    case 418:
-                        $result = __('I am a teapot');
-                        break;
-                    case 500:
-                        $result = __('Server Error');
-                        break;
-                    case 503:
-                        $result = __('Service Unavailable');
-                        break;
-                    default:
-                        return;
-                }
-                $response = [
-                    'result' => $result,
-                    'status' => $e->getStatusCode()
-                ];
-                return response()->json($response['result'], $response['status']);
-            }
+        $this->reportable(function (Throwable $e) {
+            //
         });
     }
 }
