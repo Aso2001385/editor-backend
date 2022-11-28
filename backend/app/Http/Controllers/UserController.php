@@ -11,6 +11,13 @@ use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Hashing\HashManager;
 use Illuminate\Support\Facades\Http;
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\PasswordUpdateUserRequest;
+use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests\UserSearchRequest;
+
+
+
 
 class UserController extends Controller
 {
@@ -33,7 +40,7 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateUserRequest $request)
     {
         //user作成
         $request['password'] = Hash::make($request->password);
@@ -63,14 +70,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UserEditRequest $request, User $user)
     {
         //
         $user->update($request->all());
         return response()->json($user, Response::HTTP_OK);
     }
 
-    public function passwordUpdate(Request $request)
+    public function passwordUpdate(PasswordUpdateUserRequest $request)
     {
         $user = User::findOrFail($request['id']);
         $user['password'] = Hash::make($request['new_password']);
@@ -93,7 +100,7 @@ class UserController extends Controller
         return response()->json($result, Response::HTTP_OK);
     }
 
-    public function search(Request $request)
+    public function search(UserSearchRequest $request)
     {
         try {
             $id = User::where('id', '=', $request['id']);

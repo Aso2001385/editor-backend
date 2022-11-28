@@ -55,6 +55,6 @@ class User extends Authenticatable
 
     public function designs()
     {
-        return $this->belongsToMany(Design::class, UserDesign::class, 'user_id', 'design_id')->withTimestamps();
+        return $this->belongsToMany(Design::class,UserDesign::class, 'user_id', 'design_id')->withTimestamps();
     }
 }
