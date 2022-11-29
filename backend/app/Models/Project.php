@@ -23,6 +23,5 @@ class Project extends Model
 
     public function pages(){
         $this->hasMany(Pages::class);
-
     }
 }

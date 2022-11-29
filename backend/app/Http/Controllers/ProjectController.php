@@ -39,20 +39,18 @@ class ProjectController extends Controller
         //
         $project = Project::create($request->all());
 
-        $project_user_info = [
+        ProjectUser::create([
             'project_id' => $project['id'],
             'user_id' => $project['user_id']
-        ];
-        ProjectUser::create($project_user_info);
+        ]);
 
         $user_designs = UserDesign::where('user_id', '=', $project['user_id'])->select('design_id')->get();
 
         foreach ($user_designs as $user_design) {
-            $project_design_info = [
+            ProjectDesign::create([
                 'design_id' => $user_design['design_id'],
                 'project_id' => $project['id']
-            ];
-            ProjectDesign::create($project_design_info);
+            ]);
         }
 
         return response()->json($project, Response::HTTP_OK);
@@ -62,28 +60,25 @@ class ProjectController extends Controller
     {
         $pages=Pages::where('project_id','=',$project['id'])->get();
 
-        $project_info=[
+        $project=Project::create([
             'user_id'=>Auth::id(),
             'name'=>$request['name'],
             'ui'=>$project['ui']
-        ];
-        $project=Project::create($project_info);
+        ]);
 
-        $project_user_info=[
+        ProjectUser::create([
             'project_id'=>$project['id'],
             'user_id'=>Auth::id()
-        ];
-        ProjectUser::create($project_user_info);
+        ]);
 
         $user_designs=UserDesign::where('user_id','=',Auth::id())->get();
 
         foreach($user_designs as $user_design)
         {
-            $project_design_info=[
+            ProjectDesign::create([
                 'project_id'=>$project_id,
                 'design_id'=>$user_design['design_id']
-            ];
-            ProjectDesign::create($project_design_info);
+            ]);
         }
 
         foreach($pages as $page)
@@ -124,6 +119,7 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         //
+        $project->designs();
         $project['count']=count(Page::where('project_id','=',$project['id'])->get());
         $project['last_update']=Page::where('project_id','=',$project['id'])->where('updated_at', Pages::max('updated_at'))->first();
         return response()->json($project, Response::HTTP_OK);
@@ -153,7 +149,6 @@ class ProjectController extends Controller
     {
         //
         $project->delete();
-        $result = true;
-        return response()->json($result, Response::HTTP_OK);
+        return response()->json(true, Response::HTTP_OK);
     }
 }
