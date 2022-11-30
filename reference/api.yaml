@@ -7,10 +7,10 @@ info:
   summary: markdownを使ったホームページエディタ.
   description: ''
 servers:
-  - url: 'http://localhost:8080/api'
+  - url: 'http://localhost:8080'
     description: localhost
 paths:
-  /users:
+  /api/users:
     post:
       summary: User登録
       operationId: post-users
@@ -108,7 +108,7 @@ paths:
         - index
       parameters: []
     parameters: []
-  '/users/{id}':
+  '/api/users/{id}':
     parameters:
       - schema:
           type: integer
@@ -238,7 +238,7 @@ paths:
         - delete
         - User
         - Paths
-  /users/password:
+  /api/users/password:
     put:
       summary: User　パスワード変更
       operationId: put-users-password
@@ -294,6 +294,7 @@ paths:
         - update
         - User
         - Paths
+    parameters: []
   /login:
     post:
       summary: Login
@@ -341,7 +342,7 @@ paths:
                   email: 2001195@s.asojuku.ac.jp
                   password: AsoΣ2001195
       parameters: []
-  /logout:
+  /api/logout:
     post:
       summary: Logout
       operationId: post-logout
@@ -349,7 +350,8 @@ paths:
         '200':
           description: OK
       description: ''
-  /users/search:
+    parameters: []
+  /api/users/search:
     post:
       summary: User　検索
       operationId: post-users-search
@@ -437,7 +439,8 @@ paths:
         - Search
         - User
         - Paths
-  /projects:
+    parameters: []
+  /api/projects:
     get:
       summary: Project一覧取得
       tags:
@@ -525,7 +528,8 @@ paths:
                     id: 1
                     name: ui-name
                     updated_date: '2010-12-01 12:02:00'
-  '/projects/{id}':
+    parameters: []
+  '/api/projects/{id}':
     parameters:
       - schema:
           type: integer
@@ -636,7 +640,7 @@ paths:
         - delete
         - Project
         - Paths
-  '/projects/{id}/copy':
+  '/api/projects/{id}/copy':
     parameters:
       - schema:
           type: integer
@@ -679,7 +683,7 @@ paths:
         - Paths
         - Project
         - copy
-  /projects/pages:
+  /api/projects/pages:
     parameters: []
     put:
       summary: Projectのページ保存
@@ -740,7 +744,7 @@ paths:
                 - design_id
                 - title
                 - contents
-  /designs:
+  /api/designs:
     get:
       summary: Design一覧
       tags:
@@ -817,7 +821,8 @@ paths:
         - Design
         - Paths
         - create
-  '/designs/{id}':
+    parameters: []
+  '/api/designs/{id}':
     parameters:
       - schema:
           type: integer
@@ -877,7 +882,7 @@ paths:
                   value:
                     result: true
       description: 特定idのデザイン情報を論理削除
-  '/designs/{id}/buy':
+  '/api/designs/{id}/buy':
     parameters:
       - schema:
           type: string
@@ -902,7 +907,7 @@ paths:
                     name: design1
       operationId: get-designs-buy-id
       description: デザインを購入
-  /designs/gacha:
+  /api/designs/gacha:
     get:
       summary: Designガチャ
       tags: []
@@ -921,6 +926,7 @@ paths:
                     name: design1
       operationId: get-designs-gacha
       description: ガチャァァァ!!　10連ガチャァ!!　いっぱいいっぱい回すのぉぉ!!　溶けるぅ!!　溶けちゃうう!!
+    parameters: []
 components:
   schemas:
     User:
