@@ -79,11 +79,13 @@ class UserController extends Controller
 
     public function passwordUpdate(PasswordUpdateUserRequest $request)
     {
-        $user = User::findOrFail($request['id']);
-        $user['password'] = Hash::make($request['new_password']);
+        $user=User::find($request['id']);
+        if(!Hash::check($request->old_password,$user->password)){
+            abort(401);
+        }
+        $user->password=Hash::make($request->new_password);;
         $user->save();
-        $result = true;
-        return response()->json($result, Response::HTTP_OK);
+        return response()->json(true, Response::HTTP_OK);
     }
 
     /**

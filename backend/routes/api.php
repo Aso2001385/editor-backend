@@ -21,7 +21,7 @@ use App\Http\Controllers\LoginController;
 Route::get('cors/test',[LoginController::class,'testGet']);
 Route::post('cors/test',[LoginController::class,'testPost']);
 
-Route::group(['middleware' => 'auth:api'], function () {
+// Route::group(['middleware' => 'auth:api'], function () {
     Route::put('users/password', [UserController::class, 'passwordUpdate']);
     Route::post('users/search', [UserController::class, 'search']);
 
@@ -34,11 +34,11 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('designs', DesignController::class);
     Route::get('designs/{id}/buy', [DesignController::class, 'buy']);
     Route::get('/designs/gacha', [DesignController::class, 'gacha']);
-});
+// });
 
-// Route::apiResource('users', UserController::class);
-Route::apiResource('users', UserController::class)->only(['store']);
-Route::apiResource('users', UserController::class)->except(['store'])->middleware('auth');
+Route::apiResource('users', UserController::class);
+// Route::apiResource('users', UserController::class)->only(['store']);
+// Route::apiResource('users', UserController::class)->except(['store'])->middleware('auth');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
