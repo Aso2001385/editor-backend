@@ -9,7 +9,7 @@ use App\Models\Design;
 use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
 use App\Models\UserDesign;
-
+use App\Models\Pages;
 
 
 class DatabaseSeeder extends Seeder
@@ -93,6 +93,16 @@ class DatabaseSeeder extends Seeder
             UserDesign::create([
                 'user_id'=>$user['id'],
                 'design_id'=>$design['id'],
+            ]);
+
+            Pages::create([
+                'project_id'=>$project['id'],
+                'number'=>rand(0,50),
+                'user_id'=>$user['id'],
+                'design_id'=>$design['id'],
+                'title'=>Str::random(10),
+                'contents'=>Str::random(20)
+
             ]);
 
         }
