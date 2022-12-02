@@ -1,3 +1,9 @@
-.vscode
-.idea
+# docker file
 .env
+/infrastructure/docker/mysql/logs
+/infrastructure/docker/php/bash
+# swagger
+/swagger/docs/swagger.yml
+/swagger/docs/*.gz
+
+.vscode/*.log

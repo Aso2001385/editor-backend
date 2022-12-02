@@ -6,22 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Design extends Model
+class Pages extends Model
 {
+    use HasFactory,softDeletes;
+
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'project_id',
+        'number',
         'user_id',
-        'name',
-        'point'
+        'design_id',
+        'title',
+        'contents'
     ];
 
     protected $datas = ['deleted_at'];
-
-    public function projects()
-    {
-        return $this->belongsToMany(Project::class,ProjectDesign::class,'project_id','design_id')
-        ->as('buy')
-        ->withTimestamps();
-    }
 }

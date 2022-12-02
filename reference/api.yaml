@@ -7,10 +7,10 @@ info:
   summary: markdownを使ったホームページエディタ.
   description: ''
 servers:
-  - url: 'http://localhost:8080/api'
+  - url: 'http://localhost:8080'
     description: localhost
 paths:
-  /users:
+  /api/users:
     post:
       summary: User登録
       operationId: post-users
@@ -66,6 +66,7 @@ paths:
                   name: 翔
                   email: 2001195@s.asojuku.ac.jp
                   password: AsoΣ2001195
+        description: ''
     get:
       summary: User一覧
       operationId: get-users
@@ -99,12 +100,15 @@ paths:
                       name: 翔
                       email: 2001195@s.asojuku.ac.jp
                       point: 500
+          headers: {}
       description: ユーザー全件取得。
       tags:
         - Paths
         - User
         - index
-  '/users/{id}':
+      parameters: []
+    parameters: []
+  '/api/users/{id}':
     parameters:
       - schema:
           type: integer
@@ -234,7 +238,7 @@ paths:
         - delete
         - User
         - Paths
-  /users/password:
+  /api/users/password:
     put:
       summary: User　パスワード変更
       operationId: put-users-password
@@ -290,6 +294,7 @@ paths:
         - update
         - User
         - Paths
+    parameters: []
   /login:
     post:
       summary: Login
@@ -308,6 +313,7 @@ paths:
                     name: 翔
                     email: 2001195@s.asojuku.ac.jp
                     point: 500
+          headers: {}
       description: ログイン機能
       tags:
         - Login
@@ -335,7 +341,17 @@ paths:
                 value:
                   email: 2001195@s.asojuku.ac.jp
                   password: AsoΣ2001195
-  /users/search:
+      parameters: []
+  /api/logout:
+    post:
+      summary: Logout
+      operationId: post-logout
+      responses:
+        '200':
+          description: OK
+      description: ''
+    parameters: []
+  /api/users/search:
     post:
       summary: User　検索
       operationId: post-users-search
@@ -423,7 +439,8 @@ paths:
         - Search
         - User
         - Paths
-  /projects:
+    parameters: []
+  /api/projects:
     get:
       summary: Project一覧取得
       tags:
@@ -445,6 +462,7 @@ paths:
                     - id: 1
                       user_id: 1
                       name: Project1
+                      ui: {}
       operationId: get-projects
       description: プロジェクト全件表示
     post:
@@ -485,6 +503,9 @@ paths:
                   minLength: 1
                   maxLength: 50
                   example: Project1
+                ui:
+                  type: string
+                  example: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
               required:
                 - user_id
                 - name
@@ -493,7 +514,9 @@ paths:
                 value:
                   user_id: 1
                   name: Project1
-  '/projects/{id}':
+                  ui: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
+    parameters: []
+  '/api/projects/{id}':
     parameters:
       - schema:
           type: integer
@@ -531,12 +554,13 @@ paths:
                   project_design:
                     $ref: '#/components/schemas/ProjectDesign'
               examples:
-                example-1:
+                example:
                   value:
                     project:
                       id: 1
                       user_id: 1
                       name: Project1
+                      ui: {}
                     project_design:
                       id: 1
                       project_id: 1
@@ -560,6 +584,7 @@ paths:
                     id: 1
                     user_id: 1
                     name: Project1
+                    ui: {}
       description: 特定idのプロジェクト情報を編集
       requestBody:
         content:
@@ -602,7 +627,7 @@ paths:
         - delete
         - Project
         - Paths
-  '/projects/{id}/copy':
+  '/api/projects/{id}/copy':
     parameters:
       - schema:
           type: integer
@@ -645,16 +670,11 @@ paths:
         - Paths
         - Project
         - copy
-  '/projects/{id}/save':
-    parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
+  /api/projects/pages:
+    parameters: []
     put:
-      summary: Project保存
-      operationId: put-projects-id-save
+      summary: page保存
+      operationId: put-api-projects-pages
       responses:
         '200':
           description: OK
@@ -669,17 +689,39 @@ paths:
                 example:
                   value:
                     result: true
-      description: |-
-        プロジェクト内容を保存
-
-        おきのどくですが
-        ぼうけんのしょ１ばんは
-        きえてしまいました.
-      tags:
-        - Paths
-        - Project
-        - save
-  /designs:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type: integer
+                  example: 1
+                number:
+                  type: integer
+                  example: 1
+                design_id:
+                  type: integer
+                  example: 1
+                title:
+                  type: string
+                  maxLength: 50
+                  pattern: 小泉構文
+                contents:
+                  type: string
+                  format: text
+                  example: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
+                  maxLength: 1024
+            examples:
+              example:
+                value:
+                  project_id: 1
+                  number: 1
+                  design_id: 1
+                  title: string
+                  contents: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
+  /api/designs:
     get:
       summary: Design一覧
       tags:
@@ -724,28 +766,41 @@ paths:
           application/json:
             schema:
               type: object
+              x-examples:
+                example-1:
+                  name: design1
+                  point: 5
+                  contents:
+                    id: 1
+                    name: ABC
+                    updated_at: '2010-12-01 12:02:00'
               properties:
                 name:
                   type: string
-                  minLength: 1
-                  maxLength: 50
                   example: design1
                 point:
                   type: integer
-                  minimum: 0
-                  maximum: 500
+                  format: int32
                   example: 5
+                contents:
+                  type: string
+                  example: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
+              required:
+                - name
+                - point
             examples:
               example:
                 value:
                   name: design1
                   point: 5
+                  contents: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
       description: デザイン作成
       tags:
         - Design
         - Paths
         - create
-  '/designs/{id}':
+    parameters: []
+  '/api/designs/{id}':
     parameters:
       - schema:
           type: integer
@@ -805,7 +860,7 @@ paths:
                   value:
                     result: true
       description: 特定idのデザイン情報を論理削除
-  '/designs/{id}/buy':
+  '/api/designs/{id}/buy':
     parameters:
       - schema:
           type: string
@@ -830,7 +885,7 @@ paths:
                     name: design1
       operationId: get-designs-buy-id
       description: デザインを購入
-  /designs/gacha:
+  /api/designs/gacha:
     get:
       summary: Designガチャ
       tags: []
@@ -849,6 +904,7 @@ paths:
                     name: design1
       operationId: get-designs-gacha
       description: ガチャァァァ!!　10連ガチャァ!!　いっぱいいっぱい回すのぉぉ!!　溶けるぅ!!　溶けちゃうう!!
+    parameters: []
 components:
   schemas:
     User:
@@ -906,6 +962,7 @@ components:
         - id: 1
           user_id: 1
           name: Project1
+          ui: {}
       description: プロジェクトモデル
       properties:
         id:
@@ -925,10 +982,50 @@ components:
           example: Project1
           minLength: 1
           maxLength: 50
+        ui:
+          type: object
       required:
         - id
         - user_id
         - name
+    Pages:
+      title: Pages
+      x-stoplight:
+        id: tp78ipwn62m0r
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          example: 1
+        number:
+          type: integer
+          example: 1
+          format: int32
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        design_id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: 小泉構文
+          maxLength: 50
+        contents:
+          type: string
+          format: text
+          example: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
+          maxLength: 1024
+      examples:
+        - project_id: 1
+          number: 1
+          user_id: 1
+          design_id: 1
+          title: 小泉構文
+          contents: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
     Design:
       title: Design
       x-stoplight:
@@ -938,6 +1035,8 @@ components:
         - id: 1
           user_id: 1
           name: design1
+          point: 50
+          contents: {}
       x-tags:
         - Model
         - Design
@@ -959,6 +1058,13 @@ components:
           maxLength: 50
           minLength: 1
           example: design1
+        point:
+          type: integer
+          format: int32
+          default: 0
+          example: 50
+        contents:
+          type: object
     ProjectDesign:
       title: ProjectDesign
       x-stoplight:
@@ -1081,6 +1187,7 @@ components:
       examples:
         - id: 1
           user_id: 1
+          setting: {}
       properties:
         id:
           type: integer
@@ -1094,6 +1201,8 @@ components:
           example: 1
           minimum: 1
           maximum: 255
+        setting:
+          type: object
 tags:
   - name: Model
   - name: Paths
