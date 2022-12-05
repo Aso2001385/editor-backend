@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Design;
 use App\Models\UserDesign;
@@ -75,6 +76,11 @@ class DesignController extends Controller
         return response()->json($design, Response::HTTP_OK);
     }
 
+    public function gacha(Request $request)
+    {
+
+        return response()->json($design, Response::HTTP_OK);
+    }
     /**
      * Update the specified resource in storage.
      *
