@@ -35,8 +35,8 @@ class ProjectCopyRequest extends FormRequest
     public function messages()
     {
         return[
-           'name.required' => 'プロジェクト名を記入してください',
-           'name.string' => '文字列で記入してください',
+           'name.required' => '入力してください',
+           'name.string' => '文字列で入力してください',
            'name.max' => '50文字以内で入力してください',
         ];
     }

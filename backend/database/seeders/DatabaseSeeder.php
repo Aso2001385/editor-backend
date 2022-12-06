@@ -9,6 +9,7 @@ use App\Models\Design;
 use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
 use App\Models\UserDesign;
+use App\Models\Page;
 
 
 
@@ -94,6 +95,18 @@ class DatabaseSeeder extends Seeder
                 'user_id'=>$user['id'],
                 'design_id'=>$design['id'],
             ]);
+
+            $title="title".$user['id'];
+            for($i=1;$i<=5;$i++){
+                Page::create([
+                    'project_id'=>$project['id'],
+                    'number'=>$i,
+                    'user_id'=>$user['id'],
+                    'design_id'=>$design['id'],
+                    'title'=>$title,
+                    'contents'=>"今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている"
+                ]);
+            }
 
         }
 
