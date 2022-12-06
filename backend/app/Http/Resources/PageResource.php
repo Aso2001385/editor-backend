@@ -21,9 +21,7 @@ class PageResource extends JsonResource
             'user_id' => $this->user_id,
             'design_id' => $this->design_id,
             'title' => $this->title,
-            'contents' => $this->contents,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'contents' => $this->contents
         ];
     }
 }

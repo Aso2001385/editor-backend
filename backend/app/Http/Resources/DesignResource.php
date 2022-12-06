@@ -22,6 +22,7 @@ class DesignResource extends JsonResource
             'contents' => $this->contents,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'projects' => new ProjectCollection($this->projects),
         ];
     }
 }

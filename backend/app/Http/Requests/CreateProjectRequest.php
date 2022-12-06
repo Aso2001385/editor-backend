@@ -29,15 +29,18 @@ class CreateProjectRequest extends FormRequest
     public function rules()
     {
         return [
+            'user_id' => ['required','integer'],
             'name' => ['required','string','max:50'],
-            'ui' => ['required','json']
+            //'ui' => ['required','json']
         ];
     }
 
     public function messages()
     {
         return[
-            'name.required' => '入力してください',
+            'user_id.required' => 'ユーザーIDが入力されていません',
+            'user_id.integer' => '整数で入力してください',
+            'name.required' => 'プロジェクト名を記入してください',
             'name.string' => '文字列で入力してください',
             'name.max' => '50文字以内で入力してください',
         ];
