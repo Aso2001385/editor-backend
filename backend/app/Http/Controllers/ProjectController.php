@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
 use App\Models\UserDesign;
-use App\Models\Pages;
+use App\Models\Page;
 use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\ProjectCopyRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Http\Resources\ProjectResource;
 
 class ProjectController extends Controller
 {
@@ -44,6 +46,15 @@ class ProjectController extends Controller
             'user_id' => $project['user_id']
         ]);
 
+        $page=Page::create([
+            'project_id'=>$project['id'],
+            'number'=>1,
+            'user_id'=>$project['user_id'],
+            'design_id'=>1,
+            'title'=>'新規ページ',
+            'contents'=>'# 新規ページ',
+        ]);
+
         $user_designs = UserDesign::where('user_id', '=', $project['user_id'])->select('design_id')->get();
 
         foreach ($user_designs as $user_design) {
@@ -56,22 +67,22 @@ class ProjectController extends Controller
         return response()->json($project, Response::HTTP_OK);
     }
 
-    public function copy(Project $project,ProjectCopyRequest $request)
+    public function copy($id,ProjectCopyRequest $request)
     {
-        $pages=Pages::where('project_id','=',$project['id'])->get();
-
+        $project=Project::find($id);
+        $pages=Page::where('project_id','=',$project['id'])->get();
         $project=Project::create([
-            'user_id'=>Auth::id(),
+            'user_id'=>11,
             'name'=>$request['name'],
             'ui'=>$project['ui']
         ]);
 
         ProjectUser::create([
             'project_id'=>$project['id'],
-            'user_id'=>Auth::id()
+            'user_id'=>11
         ]);
 
-        $user_designs=UserDesign::where('user_id','=',Auth::id())->get();
+        $user_designs=UserDesign::where('user_id','=',11)->get();
 
         foreach($user_designs as $user_design)
         {
@@ -86,7 +97,7 @@ class ProjectController extends Controller
             $pages_info=[
                 'project_id'=>$project['id'],
                 'number'=>$page['number'],
-                'user_id'=>Auth::id(),
+                'user_id'=>11,
                 'design_id'=>$page['design_id'],
                 'title'=>$page['title'],
                 'contents'=>$page['contents']
@@ -96,17 +107,18 @@ class ProjectController extends Controller
 
             if(count($user_design)==0)
             {
-                $pages_info['design_id']=UserDesign::where('user_id','=',Auth::id())->min('design_id');
+                $pages_info['design_id']=UserDesign::where('user_id','=',11)->min('design_id');
             }
 
-            Pages::create($pages_info);
+            Page::create($pages_info);
         }
         return response()->json($project, Response::HTTP_OK);
     }
 
     public function save(Request $request)
-    {
-        $page=Pages::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request);
+    {   
+        $request['user_id']=11;
+        $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->all());
         return response()->json($page, Response::HTTP_OK);
     }
 
@@ -119,9 +131,9 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         //
-        $project->designs();
-        $project['count']=count(Page::where('project_id','=',$project['id'])->get());
-        $project['last_update']=Page::where('project_id','=',$project['id'])->where('updated_at', Pages::max('updated_at'))->first();
+        $project = new ProjectResource(Project::findOrFail($project->id));
+        // $project['count']=count(Page::where('project_id','=',$project['id'])->get());
+        //$project['last_update']=$project->pages;
         return response()->json($project, Response::HTTP_OK);
     }
 
@@ -139,6 +151,29 @@ class ProjectController extends Controller
         return response()->json($project, Response::HTTP_OK);
     }
 
+    public function pageDelete($id)
+    {
+        $page=Page::findOrFail($id);
+        $project_id=Project::select('id')->where('id','=',$page['project_id'])->first()['id'];
+        $page_count=count(Page::where('project_id','=',$project_id)->get())-1;
+        if($page_count==0)
+        {
+            return response()->json("これ以上削除出来ません", Response::HTTP_ACCEPTED);
+        }
+        $above_pages=Page::where('project_id','=',$project_id)->where('number','>',$page['number'])->get();
+        $page->forceDelete();
+        if(count($above_pages)!=0)
+        {
+            foreach($above_pages as $above_page)
+            {
+                $above_page['number']-=1;
+                $above_page->save();
+            }
+        }
+        return response()->json(true, Response::HTTP_OK);
+    }
+
+
     /**
      * Remove the specified resource from storage.
      *
@@ -148,7 +183,11 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         //
+        $pages=Page::where('project_id','=',$project->id);
+        foreach($pages as $page){
+            $page->delete();
+        }
         $project->delete();
-        return response()->json(true, Response::HTTP_OK);
+        return response()->json(true, Response::HTTP_ACCEPTED);
     }
 }

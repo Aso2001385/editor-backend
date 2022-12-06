@@ -12,9 +12,14 @@ class Project extends Model
 
     protected $fillable = [
         'user_id',
-        'name'
+        'name',
+        'ui'
     ];
     protected $datas = ['deleted_at'];
+
+    protected $casts = [
+        'ui'  => 'json'
+    ];
 
     public function designs()
     {
@@ -22,6 +27,6 @@ class Project extends Model
     }
 
     public function pages(){
-        $this->hasMany(Pages::class);
+        return $this->hasMany(Page::class);
     }
 }

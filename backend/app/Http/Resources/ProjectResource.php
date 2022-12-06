@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Page;
 
 class ProjectResource extends JsonResource
 {
@@ -19,6 +20,8 @@ class ProjectResource extends JsonResource
             'user_id' => $this->user_id,
             'name' => $this->name,
             'ui' => $this->ui,
+            'count'=>count(Page::where('project_id','=',$this->id)->get()),
+            'last_update'=>Page::where('project_id','=',$this->id)->max('updated_at'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'pages' => new PageCollection($this->pages),

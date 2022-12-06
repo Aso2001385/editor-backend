@@ -4,13 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Pages extends Model
+class Page extends Model
 {
-    use HasFactory,softDeletes;
-
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'project_id',
@@ -20,6 +17,8 @@ class Pages extends Model
         'title',
         'contents'
     ];
+
+    protected $table = "pages";
 
     protected $datas = ['deleted_at'];
 }
