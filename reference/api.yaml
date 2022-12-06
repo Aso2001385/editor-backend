@@ -707,7 +707,7 @@ paths:
                 title:
                   type: string
                   maxLength: 50
-                  pattern: 小泉構文
+                  example: 小泉構文
                 contents:
                   type: string
                   format: text
@@ -719,8 +719,33 @@ paths:
                   project_id: 1
                   number: 1
                   design_id: 1
-                  title: string
+                  title: 小泉構文
                   contents: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
+  '/api/page/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    delete:
+      summary: page削除
+      operationId: delete-api-page-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+              examples:
+                example:
+                  value:
+                    result: true
+      description: ''
   /api/designs:
     get:
       summary: Design一覧
@@ -842,6 +867,28 @@ paths:
                     user_id: 1
                     name: design1
       description: 特定idのデザイン情報を編集
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: design1
+                point:
+                  type: integer
+                  format: int32
+                  default: 0
+                  example: 5
+                contents:
+                  type: string
+                  format: json
+                  example: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
+              required:
+                - name
+                - point
+                - contents
     delete:
       summary: Design情報削除
       operationId: delete-designs-id
@@ -962,7 +1009,7 @@ components:
         - id: 1
           user_id: 1
           name: Project1
-          ui: {}
+          ui: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
       description: プロジェクトモデル
       properties:
         id:
@@ -983,7 +1030,9 @@ components:
           minLength: 1
           maxLength: 50
         ui:
-          type: object
+          type: string
+          format: json
+          example: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
       required:
         - id
         - user_id
@@ -1036,7 +1085,7 @@ components:
           user_id: 1
           name: design1
           point: 50
-          contents: {}
+          contents: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
       x-tags:
         - Model
         - Design
@@ -1064,7 +1113,9 @@ components:
           default: 0
           example: 50
         contents:
-          type: object
+          type: string
+          example: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
+          format: json
     ProjectDesign:
       title: ProjectDesign
       x-stoplight:
