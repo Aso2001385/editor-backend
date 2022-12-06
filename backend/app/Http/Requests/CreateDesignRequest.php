@@ -30,6 +30,7 @@ class CreateDesignRequest extends FormRequest
     public function rules()
     {
         return [
+            'user_id' => ['required','integer'],
             'name' => ['required','min:1','max:50'],
             'point' => ['integer','min:0','max:500'],
             'contents' => ['required','json']
@@ -39,7 +40,9 @@ class CreateDesignRequest extends FormRequest
     public function messages()
     {
         return[
-            '*.required' => '入力してください',
+            'user_id.required' => 'ユーザーIDを入力してください',
+            'user_id.integer' => '数値で入力してください',
+            'name.required' => 'デザイン名を入力してください',
             'name.max' => '50文字以内で入力してください',
             'point.integer' => '数値で入力してください',
             'point.min' => '0ポイント以上で入力してください',

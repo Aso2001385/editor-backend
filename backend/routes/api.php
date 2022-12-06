@@ -27,11 +27,9 @@ Route::post('cors/test',[LoginController::class,'testPost']);
 
     Route::post('logout', [LoginController::class, 'logout']);
 
-    Route::put('projects/pages', [ProjectController::class, 'save']);
     Route::apiResource('projects', ProjectController::class);
     Route::post('projects/{id}/copy', [ProjectController::class, 'copy']);
-    Route::delete('page/{id}',[ProjectController::class,'pageDelete']);
-    
+    Route::post('projects/pages', [ProjectController::class, 'save']);
 
     Route::apiResource('designs', DesignController::class);
     Route::get('designs/{id}/buy', [DesignController::class, 'buy']);

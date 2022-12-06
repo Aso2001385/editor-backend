@@ -37,15 +37,17 @@ class UserUpdateRequest extends FormRequest
     public function messages()
     {
         return[
-            '*.required' => '入力してください',
+            'class.required' => '入力してください',
             'class.integer' => '数値で入力してください',
             'class.min' => '1か0で入力してください',
             'class.max' => '1か0で入力してください',
+            'name.required' => '名前を入力してください',
             'name.max' => '50文字以内で入力してください',
+            'email.required' => 'メールアドレスを入力してください',
             'email.email' => '有効なメールアドレスではありません',
             'email.max' => '50文字以内で入力してください',
             'email.unique' => '登録済みのメールアドレスです',
-        ];
+            ];
     }
 
     protected function failedValidation( Validator $validator )

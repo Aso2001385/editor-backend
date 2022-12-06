@@ -36,9 +36,10 @@ class UserLoginRequest extends FormRequest
     public function messages()
     {
         return[
-            '*.required' => '入力してください',
+            'email.required' => 'メールアドレスを入力してください',
             'email.email' => '有効なメールアドレスではありません',
             'email.max' => '50文字以内で入力してください',
+            'password.required' => 'パスワードを入力してください',
             'password.min' => 'パスワードが8文字以上ではありません',
             'password.max' => '60文字以内で入力してください',
 

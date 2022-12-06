@@ -36,10 +36,14 @@ class PasswordUpdateUserRequest extends FormRequest
     public function messages()
     {
         return[
-            '*.required' => '入力してください',
-            '*.min' => 'パスワードが8文字以上ではありません',
-            '*.max' => '50文字以内で入力してください',
-            '*.regex' => 'パスワードが適切ではありません',
+            'old_password.required' => '現在のパスワードを入力してください',
+            'old_password.min' => 'パスワードが8文字以上ではありません',
+            'old_password.max' => '50文字以内で入力してください',
+            'old_password.regex' => 'パスワードが適切ではありません',
+            'new_password.required' => '新しいパスワードを入力してください',
+            'new_password.min' => 'パスワードが8文字以上ではありません',
+            'new_password.max' => '50文字以内で入力してください',
+            'new_password.regex' => 'パスワードが適切ではありません'
         ];
     }
 
