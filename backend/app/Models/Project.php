@@ -11,11 +11,16 @@ class Project extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'uuid',
         'user_id',
         'name',
         'ui'
     ];
     protected $datas = ['deleted_at'];
+
+    protected $hidden = [
+        'id',
+    ];
 
     protected $casts = [
         'ui'  => 'json'
