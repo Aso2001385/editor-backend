@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
@@ -39,6 +40,7 @@ class ProjectController extends Controller
     public function store(CreateProjectRequest $request)
     {
         //
+        $request['uuid']=(string) Str::uuid();
         $project = Project::create($request->all());
 
         ProjectUser::create([
@@ -64,14 +66,15 @@ class ProjectController extends Controller
             ]);
         }
 
-        return response()->json($project, Response::HTTP_OK);
+        return response()->json(new ProjectResource($project), Response::HTTP_OK);
     }
 
     public function copy($id,ProjectCopyRequest $request)
     {
-        $project=Project::find($id);
+        $project=Project::where('uuid','=',$id)->first();
         $pages=Page::where('project_id','=',$project['id'])->get();
         $project=Project::create([
+            'uuid'=>(string) Str::uuid(),
             'user_id'=>11,
             'name'=>$request['name'],
             'ui'=>$project['ui']
@@ -128,12 +131,10 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Project $project)
+    public function show($id)
     {
         //
-        $project = new ProjectResource(Project::findOrFail($project->id));
-        // $project['count']=count(Page::where('project_id','=',$project['id'])->get());
-        //$project['last_update']=$project->pages;
+        $project = new ProjectResource(Project::where('uuid','=',$id)->first());
         return response()->json($project, Response::HTTP_OK);
     }
 
@@ -144,9 +145,10 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ProjectUpdateRequest $request, Project $project)
+    public function update(ProjectUpdateRequest $request, $id)
     {
         //
+        $project=Project::where('uuid','=',$id)->first();
         $project->update($request->all());
         return response()->json($project, Response::HTTP_OK);
     }
@@ -180,9 +182,10 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Project $project)
+    public function destroy($id)
     {
         //
+        $project=Project::where('uuid','=',$id)->first();
         $pages=Page::where('project_id','=',$project->id);
         foreach($pages as $page){
             $page->delete();

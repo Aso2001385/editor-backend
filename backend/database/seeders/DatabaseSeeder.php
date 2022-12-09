@@ -68,6 +68,7 @@ class DatabaseSeeder extends Seeder
         foreach($users as $user){
 
             $project = Project::create([
+                'uuid'=>(string) Str::uuid(),
                 'user_id' => $user['id'],
                 'name'=> Str::random(5),
                 'ui' => json_encode(Str::random(10))
