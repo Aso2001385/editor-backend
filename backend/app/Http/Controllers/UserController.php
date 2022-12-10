@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\UserVerifications;
 use App\Http\Resources\UserResource;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -42,11 +43,12 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
-        //user作成
+        $request['code']=str_pad(random_int(0,999999),6,0, STR_PAD_LEFT);
         $request['password'] = Hash::make($request->password);
-        $user = User::create($request->all());
-
-        return response()->json($user, Response::HTTP_OK);
+        $token=UserVerifications::create($request->all());
+        $mail_address = $token['email'];
+        // Mail::to($mail_address)->send(new MailTest($review,$user));
+        return response()->json($token, Response::HTTP_OK);
     }
 
     /**

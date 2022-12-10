@@ -6,7 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\DesignController;
 use App\Http\Controllers\LoginController;
-
+use App\Http\Controllers\VerificationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,6 +41,10 @@ Route::post('cors/test',[LoginController::class,'testPost']);
 Route::apiResource('users', UserController::class);
 // Route::apiResource('users', UserController::class)->only(['store']);
 // Route::apiResource('users', UserController::class)->except(['store'])->middleware('auth');
+
+Route::get('verifications',[VerificationController::class,'test']);
+Route::post('verifications',[VerificationController::class,'verificationCheck']);
+Route::get('verifications/{email}',[VerificationController::class,'reSend']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
