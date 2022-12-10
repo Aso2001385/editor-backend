@@ -37,17 +37,15 @@ class CreateUserRequest extends FormRequest
     public function messages()
     {
         return[
-            'name.required' => '名前を入力してください',
+            '*.required' => '入力してください',
             'name.max' => '50文字以内で入力してください',
-            'email.required' => '有効のメールアドレスではありません',
             'email.email' => '有効なメールアドレスではありません',
             'email.max' => '50文字で入力してください',
             'email.unique' => '登録済みのメールアドレスです',
-            'password.required' => 'パスワードを入力してください',
             'password.min' => 'パスワードが8文字以上ではありません',
             'password.max' => '60文字以内で入力してください',
             'password.regex' => 'パスワードが適切ではありません',
-            ];
+        ];
     }
 
     protected function failedValidation( Validator $validator )

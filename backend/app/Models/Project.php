@@ -11,10 +11,20 @@ class Project extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'uuid',
         'user_id',
-        'name'
+        'name',
+        'ui'
     ];
     protected $datas = ['deleted_at'];
+
+    protected $hidden = [
+        'id',
+    ];
+
+    protected $casts = [
+        'ui'  => 'json'
+    ];
 
     public function designs()
     {
@@ -22,7 +32,6 @@ class Project extends Model
     }
 
     public function pages(){
-        $this->hasMany(Pages::class);
-
+        return $this->hasMany(Page::class);
     }
 }

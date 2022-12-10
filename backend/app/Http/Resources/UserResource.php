@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\Project;
 use App\Models\Design;
+use App\Models\UserDesign;
 
 class UserResource extends JsonResource
 {
