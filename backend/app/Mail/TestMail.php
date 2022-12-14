@@ -7,9 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-use App\Models\User;
-
-class VerificationMail extends Mailable
+class TestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -21,10 +19,10 @@ class VerificationMail extends Mailable
      *
      * @return void
      */
-    public function __construct($name,$code)
+    public function __construct($name,$text)
     {
-        $this->title="VerificationMail";
-        $this->text=$code;
+        $this->title=sprintf('%sさんへ',$name);
+        $this->text= $text;
     }
 
     /**

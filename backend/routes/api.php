@@ -42,7 +42,7 @@ Route::apiResource('users', UserController::class);
 // Route::apiResource('users', UserController::class)->only(['store']);
 // Route::apiResource('users', UserController::class)->except(['store'])->middleware('auth');
 
-Route::get('verifications',[VerificationController::class,'test']);
+Route::post('verifications/test',[VerificationController::class,'test']);
 Route::post('verifications',[VerificationController::class,'verificationCheck']);
 Route::get('verifications/{email}',[VerificationController::class,'reSend']);
 

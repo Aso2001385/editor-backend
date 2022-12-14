@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerificationMail;
 use App\Models\User;
 use App\Models\UserVerifications;
 use App\Http\Resources\UserResource;
@@ -47,7 +49,9 @@ class UserController extends Controller
         $request['password'] = Hash::make($request->password);
         $token=UserVerifications::create($request->all());
         $mail_address = $token['email'];
-        // Mail::to($mail_address)->send(new MailTest($review,$user));
+        $name=$request['name'];
+        $text=$token['name']."さんのcodeは".$request['code']."です。";
+        Mail::to($mail_address)->send(new VerificationMail($name,$text));
         return response()->json($token, Response::HTTP_OK);
     }
 
