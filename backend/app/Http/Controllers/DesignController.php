@@ -10,6 +10,7 @@ use App\Models\Design;
 use App\Models\UserDesign;
 use Exception;
 use App\Http\Requests\CreateDesignRequest;
+use Illuminate\Support\Collection;
 
 class DesignController extends Controller
 {
@@ -76,11 +77,123 @@ class DesignController extends Controller
         return response()->json($design, Response::HTTP_OK);
     }
 
+
+
     public function gacha(Request $request)
     {
+        $point = User::select('point')->where('id',$user_id)->get();
 
-        return response()->json($design, Response::HTTP_OK);
+    //ポイントが１００ポイントの以上の場合
+    if($point >= 100)
+    {
+        $designs = Design::select('id','point')->get();
+        $user_designs_id = UserDesign::select('design_id')->where('user_id',$user_id)->get();
+        $total_design =  collect([]);
+
+        //DesignのデザインIDとUserDesignのデザインIDを比較
+        foreach($designs as $design )
+        {
+            foreach($user_designs_id as $user_design_id)
+            {
+                if($design->id != $user_design_id->design_id)
+                {
+                    $sort_total_design = $total_design->concat(['id' => $design->id])->concat(['point' => $design->point]);
+			    }
+            }
+        }
+
+        if($sort_total_design.isNotEmpty())
+        {
+
+            //total_designのpointを降順に並べ替え
+            $total_design = $sort_total_design->sortByDesc('point')->values()->toArray();
+
+            //排出率設定
+            $rarities =  [
+                'SR' => 0.1,
+                'R'  => 0.3,
+                'N' => 0.6
+            ];
+
+            //total_designの総数に応じて排出率を決める
+
+            $i = 0;
+            foreach ($rarities as $key => $weight){
+                $rarities2[$i] = array(
+                    $key => $weight*$total_design,
+                );
+                $i++;
+            }
+
+            //ここから全部メソッドにしたいです！返り値は$result_number
+            $total_weight = 0;
+            $result_number = random_int(0,array_sum($rarities2)-1);
+
+            foreach ($rarities2 as $name => $weight)
+            {
+                $total_weight += $weight;
+                if($result_number <= $total_weight)
+                {
+                    $result_rarities = $name;
+                    break;
+                }
+            }
+            //乱数で出た数値と$total_designの要素を比較する
+            $total_design->each(function ($design,$key,$result_number){
+                if($key == $result_number)
+                {
+                    return $design['id'];
+                }
+
+            });
+
+            //データベースUserのpointを100引いたものに変える
+            $point -= 100;
+            $update = UserDesign::where('id',$user_id)->first();
+            $update->point = $point;
+            $update->save();
+
+            //ガチャで引いたdesign_idとユーザーのuser_idを保存
+
+            UserDesign::create([
+                'user_id' => $user_id;
+                'design_id' => $design['id'];
+            ]);
+
+            //コンプリートして、５１個目のデザインが排出される
+            foreach($designs as $design )
+            {
+                foreach($user_designs_id as $user_design_id)
+                {
+                    if($design->id != $user_design_id->design_id)
+                    {
+                        $sort_total_design = $total_design->concat(['id' => $design->id])->concat(['point' => $design->point]);
+                    }
+                }
+            }
+            if($sort_total_design.isEmpty())
+            {
+                $message = 'コンプリートしました！';
+                UserDesign::create([
+                    'user_id' => $user_id;
+                    'design_id' => '51';
+                ]);
+            }
+
+        }else{
+            $message = 'ガチャ引けません！';
+        }
+
+    }else{
+        $message = 'ガチャ引けません！';
     }
+
+    return response()->json($design, Response::HTTP_OK);
+    }
+
+
+
+
     /**
      * Update the specified resource in storage.
      *
