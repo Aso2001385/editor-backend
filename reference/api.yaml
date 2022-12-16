@@ -504,17 +504,30 @@ paths:
                   maxLength: 50
                   example: Project1
                 ui:
-                  type: string
-                  example: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: ui-name
+                    updated_date:
+                      type: string
+                      format: date
+                      example: '2010-12-01 12:02:00'
               required:
                 - user_id
                 - name
             examples:
-              example:
+              example-1:
                 value:
                   user_id: 1
                   name: Project1
-                  ui: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
+                  ui:
+                    id: 1
+                    name: ui-name
+                    updated_date: '2010-12-01 12:02:00'
     parameters: []
   '/api/projects/{id}':
     parameters:
@@ -673,8 +686,8 @@ paths:
   /api/projects/pages:
     parameters: []
     put:
-      summary: page保存
-      operationId: put-api-projects-pages
+      summary: Projectのページ保存
+      operationId: put-projects-id-save
       responses:
         '200':
           description: OK
@@ -689,6 +702,16 @@ paths:
                 example:
                   value:
                     result: true
+      description: |-
+        プロジェクト内の各ページ内容を保存
+
+        おきのどくですが
+        ぼうけんのしょ１ばんは
+        きえてしまいました.
+      tags:
+        - Paths
+        - Project
+        - save
       requestBody:
         content:
           application/json:
@@ -697,55 +720,30 @@ paths:
               properties:
                 project_id:
                   type: integer
+                  format: int64
                   example: 1
                 number:
                   type: integer
+                  format: int32
                   example: 1
                 design_id:
                   type: integer
+                  format: int64
                   example: 1
                 title:
                   type: string
                   maxLength: 50
-                  example: 小泉構文
+                  minLength: 1
                 contents:
                   type: string
                   format: text
-                  example: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
                   maxLength: 1024
-            examples:
-              example:
-                value:
-                  project_id: 1
-                  number: 1
-                  design_id: 1
-                  title: 小泉構文
-                  contents: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
-  '/api/page/{id}':
-    parameters:
-      - schema:
-          type: integer
-        name: id
-        in: path
-        required: true
-    delete:
-      summary: page削除
-      operationId: delete-api-page-id
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: boolean
-              examples:
-                example:
-                  value:
-                    result: true
-      description: ''
+              required:
+                - project_id
+                - number
+                - design_id
+                - title
+                - contents
   /api/designs:
     get:
       summary: Design一覧
@@ -791,34 +789,33 @@ paths:
           application/json:
             schema:
               type: object
-              x-examples:
-                example-1:
-                  name: design1
-                  point: 5
-                  contents:
-                    id: 1
-                    name: ABC
-                    updated_at: '2010-12-01 12:02:00'
               properties:
                 name:
                   type: string
+                  minLength: 1
+                  maxLength: 50
                   example: design1
                 point:
                   type: integer
-                  format: int32
+                  minimum: 0
+                  maximum: 500
                   example: 5
                 contents:
-                  type: string
-                  example: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
-              required:
-                - name
-                - point
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    updated_at:
+                      type: string
+                      format: date-time
+                      example: '2010-12-01 12:02:00'
             examples:
               example:
                 value:
                   name: design1
                   point: 5
-                  contents: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
       description: デザイン作成
       tags:
         - Design
@@ -867,28 +864,6 @@ paths:
                     user_id: 1
                     name: design1
       description: 特定idのデザイン情報を編集
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: design1
-                point:
-                  type: integer
-                  format: int32
-                  default: 0
-                  example: 5
-                contents:
-                  type: string
-                  format: json
-                  example: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
-              required:
-                - name
-                - point
-                - contents
     delete:
       summary: Design情報削除
       operationId: delete-designs-id
@@ -1009,7 +984,7 @@ components:
         - id: 1
           user_id: 1
           name: Project1
-          ui: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
+          ui: {}
       description: プロジェクトモデル
       properties:
         id:
@@ -1030,9 +1005,7 @@ components:
           minLength: 1
           maxLength: 50
         ui:
-          type: string
-          format: json
-          example: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
+          type: object
       required:
         - id
         - user_id
@@ -1085,7 +1058,7 @@ components:
           user_id: 1
           name: design1
           point: 50
-          contents: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
+          contents: {}
       x-tags:
         - Model
         - Design
@@ -1113,9 +1086,7 @@ components:
           default: 0
           example: 50
         contents:
-          type: string
-          example: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
-          format: json
+          type: object
     ProjectDesign:
       title: ProjectDesign
       x-stoplight:
