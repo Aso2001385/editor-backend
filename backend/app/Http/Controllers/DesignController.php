@@ -81,7 +81,7 @@ class DesignController extends Controller
 
     public function gacha(Request $request)
     {
-        $point = User::select('point')->where('id',$user_id)->get();
+        $point = User::select('point')->where('id',$user_id)->first()['point'];
 
     //ポイントが１００ポイントの以上の場合
     if($point >= 100)
@@ -98,7 +98,7 @@ class DesignController extends Controller
                 if($design->id != $user_design_id->design_id)
                 {
                     $sort_total_design = $total_design->concat(['id' => $design->id])->concat(['point' => $design->point]);
-			    }
+                }
             }
         }
 
@@ -146,6 +146,7 @@ class DesignController extends Controller
                 }
 
             });
+            Auth::id();
 
             //データベースUserのpointを100引いたものに変える
             $point -= 100;
