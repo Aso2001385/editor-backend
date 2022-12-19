@@ -714,7 +714,6 @@ paths:
                 uuid:
                   type: string
                   example: '123456'
-
                 number:
                   type: integer
                   format: int32
@@ -949,7 +948,7 @@ paths:
     parameters: []
   /api/verifications:
     post:
-      summary: ''
+      summary: 認証コードで確認
       operationId: post-api-verifications
       responses:
         '200':
@@ -983,7 +982,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: 認証コード再送信
       tags: []
       responses: {}
       operationId: get-api-verifications-email
