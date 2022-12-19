@@ -1189,7 +1189,8 @@ components:
           default: 0
           example: 50
         contents:
-          type: object
+          type: string
+          example: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
     ProjectDesign:
       title: ProjectDesign
       x-stoplight:
