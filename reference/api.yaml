@@ -497,28 +497,15 @@ paths:
                   maxLength: 50
                   example: Project1
                 ui:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      example: 1
-                    name:
-                      type: string
-                      example: ui-name
-                    updated_date:
-                      type: string
-                      format: date
-                      example: '2010-12-01 12:02:00'
+                  type: string
+                  example: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
               required:
                 - name
             examples:
-              Example:
+              Example 1:
                 value:
                   name: Project1
-                  ui:
-                    id: 1
-                    name: ui-name
-                    updated_date: '2010-12-01 12:02:00'
+                  ui: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
     parameters: []
   '/api/projects/{id}':
     parameters:
@@ -1096,7 +1083,7 @@ components:
           uuid: 095be615-a8ad-4c33-8e9c-c7612fbf6c9f
           user_id: 1
           name: Project1
-          ui: {}
+          ui: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
       description: プロジェクトモデル
       properties:
         id:
@@ -1120,7 +1107,8 @@ components:
           minLength: 1
           maxLength: 50
         ui:
-          type: object
+          type: string
+          example: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
       required:
         - id
         - user_id
