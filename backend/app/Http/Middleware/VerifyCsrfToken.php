@@ -11,7 +11,24 @@ class VerifyCsrfToken extends Middleware
      *
      * @var array<int, string>
      */
+    protected $addHttpCookie = true;
+
     protected $except = [
-        //
+        'login',
     ];
+
+    protected function newCookie($request, $config)
+    {
+        return new Cookie(
+            strtoupper(config('app.env')) . '-XSRF-TOKEN',
+            $request->session()->token(),
+            $this->availableAt(60 * $config['lifetime']),
+            $config['path'],
+            $config['domain'],
+            $config['secure'],
+            false,
+            false,
+            $config['same_site'] ?? null
+        );
+    }
 }

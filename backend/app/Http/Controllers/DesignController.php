@@ -53,12 +53,12 @@ class DesignController extends Controller
      */
     public function show(Design $design)
     {
-        //
+        return response()->json($design, Response::HTTP_OK);
     }
 
     public function buy(Design $design)
     {
-        $user = User::find(auth()->user()->id);
+        $user = User::find(Auth::id());
         $user['point'] = $user['point'] - $design['point'];
 
         if ($user['point'] >= 0) {
@@ -157,8 +157,8 @@ class DesignController extends Controller
             //ガチャで引いたdesign_idとユーザーのuser_idを保存
 
             UserDesign::create([
-                'user_id' => $user_id;
-                'design_id' => $design['id'];
+                'user_id' => $user_id,
+                'design_id' => $design['id'],
             ]);
 
             //コンプリートして、５１個目のデザインが排出される
@@ -176,8 +176,8 @@ class DesignController extends Controller
             {
                 $message = 'コンプリートしました！';
                 UserDesign::create([
-                    'user_id' => $user_id;
-                    'design_id' => '51';
+                    'user_id' => $user_id,
+                    'design_id' => '51',
                 ]);
             }
 
