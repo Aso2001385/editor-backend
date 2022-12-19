@@ -40,6 +40,7 @@ class ProjectController extends Controller
     public function store(CreateProjectRequest $request)
     {
         //
+        $request['user_id']=Auth::id();
         $request['uuid']=(string) Str::uuid();
         $project = Project::create($request->all());
 
@@ -71,58 +72,66 @@ class ProjectController extends Controller
 
     public function copy($id,ProjectCopyRequest $request)
     {
-        $project=Project::where('uuid','=',$id)->first();
-        $pages=Page::where('project_id','=',$project['id'])->get();
-        $project=Project::create([
-            'uuid'=>(string) Str::uuid(),
-            'user_id'=>11,
-            'name'=>$request['name'],
-            'ui'=>$project['ui']
-        ]);
-
-        ProjectUser::create([
-            'project_id'=>$project['id'],
-            'user_id'=>11
-        ]);
-
-        $user_designs=UserDesign::where('user_id','=',11)->get();
-
-        foreach($user_designs as $user_design)
-        {
-            ProjectDesign::create([
-                'project_id'=>$project_id,
-                'design_id'=>$user_design['design_id']
+        if(isset(Project::where('uuid','=',$id)->first()['id'])){
+            $project=Project::where('uuid','=',$id)->first();
+            $pages=Page::where('project_id','=',$project['id'])->get();
+            $project=Project::create([
+                'uuid'=>(string) Str::uuid(),
+                'user_id'=>Auth::id(),
+                'name'=>$request['name'],
+                'ui'=>$project['ui']
             ]);
-        }
 
-        foreach($pages as $page)
-        {
-            $pages_info=[
+            ProjectUser::create([
                 'project_id'=>$project['id'],
-                'number'=>$page['number'],
-                'user_id'=>11,
-                'design_id'=>$page['design_id'],
-                'title'=>$page['title'],
-                'contents'=>$page['contents']
-            ];
+                'user_id'=>Auth::id()
+            ]);
 
-            $user_design=UserDesign::where('design_id','=',$page['design_id'])->get();
+            $user_designs=UserDesign::where('user_id','=',Auth::id())->get();
 
-            if(count($user_design)==0)
+            foreach($user_designs as $user_design)
             {
-                $pages_info['design_id']=UserDesign::where('user_id','=',11)->min('design_id');
+                ProjectDesign::create([
+                    'project_id'=>$project_id,
+                    'design_id'=>$user_design['design_id']
+                ]);
             }
 
-            Page::create($pages_info);
+            foreach($pages as $page)
+            {
+                $pages_info=[
+                    'project_id'=>$project['id'],
+                    'number'=>$page['number'],
+                    'user_id'=>Auth::id(),
+                    'design_id'=>$page['design_id'],
+                    'title'=>$page['title'],
+                    'contents'=>$page['contents']
+                ];
+
+                $user_design=UserDesign::where('design_id','=',$page['design_id'])->get();
+
+                if(count($user_design)==0)
+                {
+                    $pages_info['design_id']=UserDesign::where('user_id','=',Auth::id())->min('design_id');
+                }
+
+                Page::create($pages_info);
+            }
+            return response()->json($project, Response::HTTP_OK);
         }
-        return response()->json($project, Response::HTTP_OK);
+        return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 
     public function save(Request $request)
     {   
-        $request['user_id']=11;
-        $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->all());
-        return response()->json($page, Response::HTTP_OK);
+        if(isset(Project::where('uuid','=',$request['uuid'])->first()['id'])){
+            $request['project_id']=Project::where('uuid','=',$request['uuid'])->first()['id'];
+            $request['user_id']=Auth::id();
+            unset($request['uuid']);
+            $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->all());
+            return response()->json(true, Response::HTTP_OK);
+        }
+        return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -134,8 +143,11 @@ class ProjectController extends Controller
     public function show($id)
     {
         //
-        $project = new ProjectResource(Project::where('uuid','=',$id)->first());
-        return response()->json($project, Response::HTTP_OK);
+        if(isset(Project::where('uuid','=',$id)->first()['id'])){
+            $project = new ProjectResource(Project::where('uuid','=',$id)->first());
+            return response()->json($project, Response::HTTP_OK);
+        }
+        return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -148,9 +160,13 @@ class ProjectController extends Controller
     public function update(ProjectUpdateRequest $request, $id)
     {
         //
-        $project=Project::where('uuid','=',$id)->first();
-        $project->update($request->all());
-        return response()->json($project, Response::HTTP_OK);
+        if(isset(Project::where('uuid','=',$id)->first()['id'])){
+            $project=Project::where('uuid','=',$id)->first();
+            $request['user_id']=Auth::id();
+            $project->update($request->all());
+            return response()->json($project, Response::HTTP_OK);
+        }
+        return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 
     public function pageDelete($id)
@@ -185,12 +201,15 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         //
-        $project=Project::where('uuid','=',$id)->first();
-        $pages=Page::where('project_id','=',$project->id);
-        foreach($pages as $page){
-            $page->delete();
+        if(isset(Project::where('uuid','=',$id)->first()['id'])){
+            $project=Project::where('uuid','=',$id)->first();
+            $pages=Page::where('project_id','=',$project->id);
+            foreach($pages as $page){
+                $page->delete();
+            }
+            $project->delete();
+            return response()->json(true, Response::HTTP_OK);
         }
-        $project->delete();
-        return response()->json(true, Response::HTTP_ACCEPTED);
+        return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 }
