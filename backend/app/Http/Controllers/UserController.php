@@ -87,7 +87,7 @@ class UserController extends Controller
     {
         $user=User::find($request['id']);
         if(!Hash::check($request->old_password,$user->password)){
-            abort(401);
+            return response()->json(false, Response::HTTP_UNAUTHORIZED);
         }
         $user->password=Hash::make($request->new_password);;
         $user->save();
