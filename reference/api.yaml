@@ -1161,7 +1161,7 @@ components:
           user_id: 1
           name: design1
           point: 50
-          contents: {}
+          contents: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
       x-tags:
         - Model
         - Design
