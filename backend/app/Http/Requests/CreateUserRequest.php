@@ -29,7 +29,7 @@ class CreateUserRequest extends FormRequest
     {
         return [
             'name' => ['required','string','max:50'],
-            'email' => ['required','email','max:50','unique:users'],
+            'email' => ['required','email','max:50','unique:user_verifications','unique:users'],
             'password' => ['required','string','min:8','max:60','regex:/(?=.*[a-z)(?=.*[A-Z])(?=.*[0-9])(?=.*[\/\-\_ΔΣΩ])[a-zA-Z0-9]/'],
         ];
     }

@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerificationMail;
 use App\Models\User;
+use App\Models\UserVerifications;
 use App\Http\Resources\UserResource;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -42,11 +45,14 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
-        //user作成
+        $request['code']=str_pad(random_int(0,999999),6,0, STR_PAD_LEFT);
         $request['password'] = Hash::make($request->password);
-        $user = User::create($request->all());
-
-        return response()->json($user, Response::HTTP_OK);
+        $token=UserVerifications::create($request->all());
+        $mail_address = $token['email'];
+        $name=$request['name'];
+        $text=$token['name']."さんのcodeは".$request['code']."です。";
+        Mail::to($mail_address)->send(new VerificationMail($name,$text));
+        return response()->json($token, Response::HTTP_OK);
     }
 
     /**
