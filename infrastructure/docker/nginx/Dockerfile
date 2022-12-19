@@ -1,8 +1,10 @@
-FROM nginx:1.18-alpine
+FROM nginx:1.21-alpine
+SHELL ["/bin/ash", "-oeux", "pipefail", "-c"]
 
-ENV TZ=UTC
+RUN apk update && \
+    apk add --update --no-cache --virtual=.build-dependencies g++
 
-# nginx config file
-COPY ./infrastructure/docker/nginx/*.conf /etc/nginx/conf.d/
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./default.conf /etc/nginx/conf.d/default.conf
 
-WORKDIR /var/www/html
+WORKDIR /work
