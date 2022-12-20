@@ -75,6 +75,7 @@ class DatabaseSeeder extends Seeder
             ]);
 
             $design = Design::create([
+                'uuid'=>(string) Str::uuid(),
                 'user_id' => $user['id'],
                 'name' => Str::random(5),
                 'contents' => json_encode(Str::random(10)),
