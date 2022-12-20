@@ -83,7 +83,7 @@ class UserController extends Controller
 
     public function projects()
     {
-        return response()->json(new UserProjectResource(User::findOrFail(2)), Response::HTTP_OK);
+        return response()->json(new UserProjectResource(User::findOrFail(Auth::id())), Response::HTTP_OK);
     }
 
 
