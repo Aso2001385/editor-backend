@@ -51,10 +51,7 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
-        if(isset(UserVerifications::where('email','=',$request['email'])->get())){
-            $user_verificated=UserVerifications::where('email','=',$request['email'])->get();
-            $user_verificated->forceDelete();
-        }
+        $user_verificated=UserVerifications::where('email','=',$request['email'])->forceDelete();
         $request['code']=str_pad(random_int(0,999999),6,0, STR_PAD_LEFT);
         $request['password'] = Hash::make($request->password);
         $token=UserVerifications::create($request->all());
@@ -86,7 +83,7 @@ class UserController extends Controller
 
     public function projects()
     {
-        return response()->json(new UserProjectResource(User::findOrFail(Auth::id())), Response::HTTP_OK);
+        return response()->json(new UserProjectResource(User::findOrFail(2)), Response::HTTP_OK);
     }
 
 

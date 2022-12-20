@@ -23,7 +23,7 @@ class ProjectPageResource extends JsonResource
             'ui' => $this->ui,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'last_update_pages' =>Page::where('updated_at','=',Page::where('project_id','=',$this->id)->max('updated_at'))->get(),
+            'last_update_pages' =>Page::where('updated_at','=',Page::where('project_id','=',$this->id)->max('updated_at'))->where('project_id','=',$this->id)->get(),
         ];
     }
 }
