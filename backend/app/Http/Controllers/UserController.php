@@ -15,6 +15,7 @@ use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserDesignResource;
+use App\Http\Resources\UserProjectResource;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Hashing\HashManager;
@@ -81,7 +82,7 @@ class UserController extends Controller
 
     public function projects()
     {
-
+        return response()->json(new UserProjectResource(User::findOrFail(2)), Response::HTTP_OK);
     }
 
 
