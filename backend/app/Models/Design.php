@@ -13,7 +13,8 @@ class Design extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'point'
+        'point',
+        'contents'
     ];
 
     protected $datas = ['deleted_at'];

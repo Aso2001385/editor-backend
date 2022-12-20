@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Design;
 use App\Models\UserDesign;
+use App\Models\ProjectUser;
+use App\Models\ProjectDesign;
 use Exception;
 use App\Http\Requests\CreateDesignRequest;
 use Illuminate\Support\Collection;
@@ -35,13 +37,21 @@ class DesignController extends Controller
     public function store(CreateDesignRequest $request)
     {
         //
+        $request['user_id']=2;
         $design = Design::create($request->all());
-        $design_user_info = [
+        UserDesign::create([
             'design_id' => $design['id'],
-            'user_id' => $design['user_id']
-        ];
-        $design_user = UserDesign::create($design_user_info);
-
+            'user_id' => $design['user_id'],
+        ]);
+        $projects=ProjectUser::where('user_id','=',2)->get();
+        if(isset($projects)){
+            foreach($projects as $project){
+                ProjectDesign::create([
+                    'project_id'=>$project['project_id'],
+                    'design_id'=>$design['id'],
+                ]);
+            }
+        }
         return response()->json($design, Response::HTTP_OK);
     }
 
