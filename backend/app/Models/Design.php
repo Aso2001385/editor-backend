@@ -11,6 +11,7 @@ class Design extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'uuid',
         'user_id',
         'name',
         'point',
@@ -18,6 +19,10 @@ class Design extends Model
     ];
 
     protected $datas = ['deleted_at'];
+
+    protected $hidden = [
+        'id',
+    ];
 
     public function projects()
     {

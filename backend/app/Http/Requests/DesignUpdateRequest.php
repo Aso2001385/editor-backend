@@ -7,10 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
-
-
-
-class CreateDesignRequest extends FormRequest
+class DesignUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -57,7 +54,4 @@ class CreateDesignRequest extends FormRequest
             response()->json($response['result'],$response['status'])
         );
     }
-
 }
-
-

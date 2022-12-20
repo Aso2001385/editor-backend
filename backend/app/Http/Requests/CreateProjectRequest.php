@@ -40,6 +40,7 @@ class CreateProjectRequest extends FormRequest
             'name.required' => '入力してください',
             'name.string' => '文字列で入力してください',
             'name.max' => '50文字以内で入力してください',
+            '*.json'=> 'json型で送られていません',
         ];
     }
 

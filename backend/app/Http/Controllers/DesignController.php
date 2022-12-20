@@ -12,6 +12,7 @@ use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
 use Exception;
 use App\Http\Requests\CreateDesignRequest;
+use App\Http\Requests\DesignUpdateRequest;
 use Illuminate\Support\Collection;
 
 class DesignController extends Controller
@@ -61,30 +62,38 @@ class DesignController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Design $design)
+    public function show($id)
     {
-        return response()->json($design, Response::HTTP_OK);
+        if(isset(Design::where('uuid','=',$id)->first()['id'])){
+            $design=Design::where('uuid','=',$id)->first();
+            return response()->json($design, Response::HTTP_OK);
+        }
+        return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 
-    public function buy(Design $design)
-    {
-        $user = User::find(Auth::id());
-        $user['point'] = $user['point'] - $design['point'];
+    public function buy($id)
+    {   
+        if(isset(Design::where('uuid','=',$id)->first()['id'])){
+            $design=Design::where('uuid','=',$id)->first();
+            $user = User::find(Auth::id());
+            $user['point'] = $user['point'] - $design['point'];
 
-        if ($user['point'] >= 0) {
-            $design_user_info = [
-                'design_id' => $design['id'],
-                'user_id' => auth()->user()->id
-            ];
+            if ($user['point'] >= 0) {
+                $design_user_info = [
+                    'design_id' => $design['id'],
+                    'user_id' => auth()->user()->id
+                ];
 
-            $design_user = UserDesign::create($design_user_info);
+                $design_user = UserDesign::create($design_user_info);
 
-            $user->update(['point' => $user['point']]);
-        } else {
-            return response()->json('Not Enough', Response::HTTP_I_AM_A_TEAPOT);
+                $user->update(['point' => $user['point']]);
+            } else {
+                return response()->json('Not Enough', Response::HTTP_I_AM_A_TEAPOT);
+            }
+
+            return response()->json($design, Response::HTTP_OK);
         }
-
-        return response()->json($design, Response::HTTP_OK);
+        return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 
 
@@ -212,11 +221,15 @@ class DesignController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Design $design)
+    public function update(DesignUpdateRequest $request, $id)
     {
         //
-        $design->update($request->all());
-        return response()->json($design, Response::HTTP_OK);
+        if(isset(Design::where('uuid','=',$id)->first()['id'])){
+            $design=Design::where('uuid','=',$id)->first();
+            $design->update($request->all());
+            return response()->json($design, Response::HTTP_OK);
+        }
+        return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -225,11 +238,14 @@ class DesignController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Design $design)
+    public function destroy($id)
     {
-        $design->delete();
-        $result = true;
+        if(isset(Design::where('uuid','=',$id)->first()['id'])){
+            $design=Design::where('uuid','=',$id)->first();
+            $design->delete();
 
-        return response()->json($result, Response::HTTP_OK);
+            return response()->json(true, Response::HTTP_OK);
+        }
+        return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 }
