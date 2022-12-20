@@ -23,7 +23,7 @@ class LoginController extends Controller
     {
         if (Auth::attempt($request->toArray())) {
             $request->session()->regenerate();
-
+            $request->session()->token();
             return response()->json(Auth::user(), Response::HTTP_OK);
         }
         return response()->json([], Response::HTTP_UNAUTHORIZED);

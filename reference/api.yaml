@@ -20,15 +20,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserVerifications'
               examples:
-                example:
+                example-1:
                   value:
                     id: 1
                     name: 翔
-                    email: 2001195@s.asojuku.ac.jp
-                    password: AsoΣ2001195
-                    point: 500
+                    code: '123456'
       tags:
         - create
         - Users
@@ -457,12 +455,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/Project'
               examples:
-                example:
+                'Example ':
                   value:
                     - id: 1
+                      uuid: 095be615-a8ad-4c33-8e9c-c7612fbf6c9f
                       user_id: 1
                       name: Project1
-                      ui: {}
+                      ui: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
       operationId: get-projects
       description: プロジェクト全件表示
     post:
@@ -492,12 +491,6 @@ paths:
             schema:
               type: object
               properties:
-                user_id:
-                  type: integer
-                  format: int64
-                  example: 1
-                  minimum: 1
-                  maximum: 255
                 name:
                   type: string
                   minLength: 1
@@ -505,21 +498,19 @@ paths:
                   example: Project1
                 ui:
                   type: string
-                  example: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
+                  example: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
               required:
-                - user_id
                 - name
             examples:
-              example:
+              Example 1:
                 value:
-                  user_id: 1
                   name: Project1
-                  ui: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
+                  ui: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
     parameters: []
   '/api/projects/{id}':
     parameters:
       - schema:
-          type: integer
+          type: string
         name: id
         in: path
         required: true
@@ -554,13 +545,14 @@ paths:
                   project_design:
                     $ref: '#/components/schemas/ProjectDesign'
               examples:
-                example:
+                Example:
                   value:
                     project:
                       id: 1
+                      uuid: 095be615-a8ad-4c33-8e9c-c7612fbf6c9f
                       user_id: 1
                       name: Project1
-                      ui: {}
+                      ui: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
                     project_design:
                       id: 1
                       project_id: 1
@@ -579,12 +571,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Project'
               examples:
-                example:
+                Example:
                   value:
                     id: 1
+                    uuid: 095be615-a8ad-4c33-8e9c-c7612fbf6c9f
                     user_id: 1
                     name: Project1
-                    ui: {}
+                    ui: '{     \"id\": 1,     \"name\": \"ABC\",     \"updated_at\": \"2010-12-01 12:02:00\"   }'
       description: 特定idのプロジェクト情報を編集
       requestBody:
         content:
@@ -630,7 +623,7 @@ paths:
   '/api/projects/{id}/copy':
     parameters:
       - schema:
-          type: integer
+          type: string
         name: id
         in: path
         required: true
@@ -673,8 +666,8 @@ paths:
   /api/projects/pages:
     parameters: []
     put:
-      summary: page保存
-      operationId: put-api-projects-pages
+      summary: Projectのページ保存
+      operationId: put-projects-id-save
       responses:
         '200':
           description: OK
@@ -689,38 +682,74 @@ paths:
                 example:
                   value:
                     result: true
+      description: |-
+        プロジェクト内の各ページ内容を保存
+
+        おきのどくですが
+        ぼうけんのしょ１ばんは
+        きえてしまいました.
+      tags:
+        - Paths
+        - Project
+        - save
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                project_id:
-                  type: integer
-                  example: 1
+                uuid:
+                  type: string
+                  example: '123456'
                 number:
                   type: integer
+                  format: int32
                   example: 1
                 design_id:
                   type: integer
+                  format: int64
                   example: 1
                 title:
                   type: string
                   maxLength: 50
-                  pattern: 小泉構文
+                  minLength: 1
                 contents:
                   type: string
                   format: text
-                  example: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
                   maxLength: 1024
             examples:
-              example:
+              Example:
                 value:
-                  project_id: 1
+                  uuid: '123456'
                   number: 1
                   design_id: 1
-                  title: string
+                  title: 小泉構文
                   contents: 今のままではいけないと思います。だからこそ、日本は今のままではいけないと思っている
+  '/api/page/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    delete:
+      summary: page削除
+      operationId: delete-api-page-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+              examples:
+                example:
+                  value:
+                    result: true
+      description: ''
   /api/designs:
     get:
       summary: Design一覧
@@ -766,34 +795,33 @@ paths:
           application/json:
             schema:
               type: object
-              x-examples:
-                example-1:
-                  name: design1
-                  point: 5
-                  contents:
-                    id: 1
-                    name: ABC
-                    updated_at: '2010-12-01 12:02:00'
               properties:
                 name:
                   type: string
+                  minLength: 1
+                  maxLength: 50
                   example: design1
                 point:
                   type: integer
-                  format: int32
+                  minimum: 0
+                  maximum: 500
                   example: 5
                 contents:
-                  type: string
-                  example: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
-              required:
-                - name
-                - point
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    updated_at:
+                      type: string
+                      format: date-time
+                      example: '2010-12-01 12:02:00'
             examples:
               example:
                 value:
                   name: design1
                   point: 5
-                  contents: '{     "id": 1,     "name": "ABC",     "updated_at": "2010-12-01 12:02:00"   }'
       description: デザイン作成
       tags:
         - Design
@@ -905,6 +933,75 @@ paths:
       operationId: get-designs-gacha
       description: ガチャァァァ!!　10連ガチャァ!!　いっぱいいっぱい回すのぉぉ!!　溶けるぅ!!　溶けちゃうう!!
     parameters: []
+  /api/verifications:
+    post:
+      summary: 認証コードで確認
+      operationId: post-api-verifications
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: 2001195@s.asojuku.ac.jp
+                code:
+                  type: string
+                  minLength: 6
+                  maxLength: 6
+                  format: number
+                  example: '123456'
+            examples:
+              example:
+                value:
+                  email: 2001195@s.asojuku.ac.jp
+                  code: '123456'
+  '/api/verifications/{email}':
+    parameters:
+      - schema:
+          type: string
+        name: email
+        in: path
+        required: true
+    get:
+      summary: 認証コード再送信
+      tags: []
+      responses: {}
+      operationId: get-api-verifications-email
+  /api/verifications/test:
+    post:
+      summary: テスト送信
+      tags: []
+      responses: {}
+      operationId: get-api-verifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: 2001154@s.asojuku.ac.jp
+                name:
+                  type: string
+                  example: 木山
+                text:
+                  type: string
+                  example: あいいあいあいあいあいああい
+            examples:
+              example:
+                value:
+                  email: 2001154@s.asojuku.ac.jp
+                  name: 木山
+                  text: あいいあいあいあいあいああい
+    parameters: []
 components:
   schemas:
     User:
@@ -950,6 +1047,29 @@ components:
         - name
         - email
         - point
+    UserVerifications:
+      title: UserVerifications
+      x-stoplight:
+        id: 6ac2kjrn2nqn4
+      type: object
+      examples:
+        - id: 1
+          name: 翔
+          code: '123456'
+      description: ''
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: 翔
+        code:
+          type: string
+          minLength: 6
+          maxLength: 6
+          example: '123456'
     Project:
       title: Project
       x-stoplight:
@@ -960,9 +1080,10 @@ components:
         - Project
       examples:
         - id: 1
+          uuid: 095be615-a8ad-4c33-8e9c-c7612fbf6c9f
           user_id: 1
           name: Project1
-          ui: {}
+          ui: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
       description: プロジェクトモデル
       properties:
         id:
@@ -971,6 +1092,9 @@ components:
           example: 1
           minimum: 1
           maximum: 255
+        uuid:
+          type: string
+          format: uuid
         user_id:
           type: integer
           format: int64
@@ -983,7 +1107,8 @@ components:
           minLength: 1
           maxLength: 50
         ui:
-          type: object
+          type: string
+          example: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
       required:
         - id
         - user_id
@@ -1036,7 +1161,7 @@ components:
           user_id: 1
           name: design1
           point: 50
-          contents: {}
+          contents: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
       x-tags:
         - Model
         - Design
@@ -1064,7 +1189,8 @@ components:
           default: 0
           example: 50
         contents:
-          type: object
+          type: string
+          example: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
     ProjectDesign:
       title: ProjectDesign
       x-stoplight:

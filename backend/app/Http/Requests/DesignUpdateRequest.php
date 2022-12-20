@@ -7,9 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
-
-
-class ProjectUpdateRequest extends FormRequest
+class DesignUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,16 +27,21 @@ class ProjectUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required','string','max:50'],
+            'name' => ['required','min:1','max:50'],
+            'point' => ['integer','min:0','max:500'],
+            'contents' => ['required','json']
         ];
     }
 
     public function messages()
     {
         return[
-            'name.required' => '入力してください',
+            '*.required' => '入力してください',
             'name.max' => '50文字以内で入力してください',
-            'name.string' => '文字列で入力してください'
+            'point.integer' => '数値で入力してください',
+            'point.min' => '0ポイント以上で入力してください',
+            'point.max' => '500ポイント以内で入力してください',
+            '*.json'=> 'json型で送られていません',
         ];
     }
 
@@ -51,6 +54,4 @@ class ProjectUpdateRequest extends FormRequest
             response()->json($response['result'],$response['status'])
         );
     }
-
-
 }
