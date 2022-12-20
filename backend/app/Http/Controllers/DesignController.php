@@ -37,13 +37,13 @@ class DesignController extends Controller
     public function store(CreateDesignRequest $request)
     {
         //
-        $request['user_id']=2;
+        $request['user_id']=Auth::id();
         $design = Design::create($request->all());
         UserDesign::create([
             'design_id' => $design['id'],
             'user_id' => $design['user_id'],
         ]);
-        $projects=ProjectUser::where('user_id','=',2)->get();
+        $projects=ProjectUser::where('user_id','=',Auth::id())->get();
         if(isset($projects)){
             foreach($projects as $project){
                 ProjectDesign::create([

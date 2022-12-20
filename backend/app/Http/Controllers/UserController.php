@@ -9,7 +9,12 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationMail;
 use App\Models\User;
 use App\Models\UserVerifications;
+use App\Models\Design;
+use App\Models\UserDesign;
+use App\Models\Project;
+use App\Models\ProjectUser;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UserDesignResource;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Hashing\HashManager;
@@ -66,8 +71,19 @@ class UserController extends Controller
         //
         //$user->projects;
         $user = new UserResource(User::findOrFail($user->id));
-        return response()->json($user, Response::HTTP_OK);
+        return response()->json(new UserResource(User::findOrFail($user->id)), Response::HTTP_OK);
     }
+
+    public function designs()
+    {
+        return response()->json(new UserDesignResource(User::findOrFail(Auth::id())), Response::HTTP_OK);
+    }
+
+    public function projects()
+    {
+
+    }
+
 
     /**
      * Update the specified resource in storage.
