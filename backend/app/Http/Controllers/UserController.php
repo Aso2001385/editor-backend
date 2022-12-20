@@ -51,6 +51,7 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
+        $user_verificated=UserVerifications::where('email','=',$request['email'])->forceDelete();
         $request['code']=str_pad(random_int(0,999999),6,0, STR_PAD_LEFT);
         $request['password'] = Hash::make($request->password);
         $token=UserVerifications::create($request->all());
