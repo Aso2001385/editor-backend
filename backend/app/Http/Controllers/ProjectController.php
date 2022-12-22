@@ -15,6 +15,9 @@ use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\ProjectCopyRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\Http\Resources\ProjectResource;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\RequestException;
+use Exception;
 
 class ProjectController extends Controller
 {
@@ -209,6 +212,53 @@ class ProjectController extends Controller
             }
             $project->delete();
             return response()->json(true, Response::HTTP_OK);
+        }
+        return response()->json(false, Response::HTTP_NOT_FOUND);
+    }
+
+
+    public function export($id)
+    {
+        if(isset(Project::where('uuid','=',$id)->first()['id'])){
+            $project=Project::where('uuid','=',$id)->first();
+            $pages=Page::where('project_id','=',$project->id)->get();
+            try{
+                foreach($pages as $page)
+                {
+                    $response=Http::withToken(config('markdownapi.token'))
+                    ->withHeaders([
+                        'Accept'=>config('markdownapi.accept'),
+                        'Content-type'=>'text/plain'
+                    ])
+                    ->post(config('markdownapi.url'),[
+                        'text'=>$page['contents']
+                    ])->body();
+
+                    
+                    // $response=str_replace(array("\r\n", "\r", "\n"), "",$response->body());
+                    
+                    
+                    $page['response']= "<div class="."content".">".$response."</div>";
+                    // // \File::append(storage_path('logs/'.$page['id'].'.html'), $responce);
+                    // $file_handle = fopen( 'logs/'.$page['id'].'.html', "w");
+                    // fwrite( $file_handle, $response);
+                    // fclose($file_handle);
+
+                }
+                return response()->json($pages, Response::HTTP_OK);
+            }
+            catch(\GuzzleHttp\Exception\ConnectException $e)
+            {
+                return response()->json($e->getHandlerContext(), Response::HTTP_BAD_REQUEST);
+            }
+            catch(\GuzzleHttp\Exception\RequestException $e)
+            {
+                return response()->json($e->getHandlerContext(), Response::HTTP_BAD_REQUEST);
+            }
+            catch(Exception $e)
+            {
+                return response()->json($e, $e->getCode());
+            }
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
