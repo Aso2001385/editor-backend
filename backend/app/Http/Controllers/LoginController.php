@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserLoginRequest;
+use App\Models\User;
 
 class LoginController extends Controller
 {
 
     public function testGet(Request $request){
-        return response()->json(Auth::user()->name,200);
+        $user=User::find($request['user_id']);
+        return response()->json($user['name'],200);
     }
 
 
@@ -21,21 +23,17 @@ class LoginController extends Controller
 
     public function login(UserLoginRequest $request)
     {
-        if (Auth::attempt($request->toArray())) {
-            $request->session()->regenerate();
-            $request->session()->token();
-            return response()->json(Auth::user(), Response::HTTP_OK);
+        $user=User::findOrFail($request['id']);
+        if (Hash::check($request['password'],$user['password'])) {
+            session(['user' => $user]);
+            return response()->json($user, Response::HTTP_OK);
         }
         return response()->json([], Response::HTTP_UNAUTHORIZED);
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
+        $request->session()->forget('user');
 
         return response()->json(true, Response::HTTP_OK);
     }
