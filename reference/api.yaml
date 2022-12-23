@@ -106,6 +106,49 @@ paths:
         - index
       parameters: []
     parameters: []
+  /api/users/register:
+    post:
+      summary: emailを送信しないuser登録
+      operationId: post-api-users-register
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 翔
+                  minLength: 1
+                  maxLength: 50
+                email:
+                  type: string
+                  example: 2001195@s.asojuku.ac.jp
+                  minLength: 1
+                  maxLength: 50
+                password:
+                  type: string
+                  example: AsoΣ2001195
+                  minLength: 8
+                  maxLength: 30
+                  format: password
+              required:
+                - name
+                - email
+                - password
+            examples:
+              Example 1:
+                value:
+                  name: 翔
+                  email: 2001195@s.asojuku.ac.jp
+                  password: AsoΣ2001195
   '/api/users/{id}':
     parameters:
       - schema:
@@ -694,6 +737,18 @@ paths:
         - Paths
         - Project
         - copy
+  '/api/projects/export/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: project export
+      tags: []
+      responses: {}
+      operationId: get-api-projects-export-id
   /api/projects/pages:
     parameters: []
     put:
