@@ -23,8 +23,8 @@ Route::post('cors/test',[LoginController::class,'testPost']);
 
     Route::put('users/password', [UserController::class, 'passwordUpdate']);
     Route::post('users/search', [UserController::class, 'search']);
-    Route::get('users/designs',[UserController::class, 'designs']);
-    Route::get('users/projects',[UserController::class, 'projects']);
+    Route::get('users/designs/{id}',[UserController::class, 'designs']);
+    Route::get('users/projects/{id}',[UserController::class, 'projects']);
 
     Route::post('logout', [LoginController::class, 'logout']);
 
