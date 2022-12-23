@@ -62,6 +62,14 @@ class UserController extends Controller
         return response()->json($token, Response::HTTP_OK);
     }
 
+    public function register(CreateUserRequest $request)
+    {
+        $user=User::create($request->all());
+
+        return response()->json($user, Response::HTTP_OK);
+    }
+
+
     /**
      * Display the specified resource.
      *
