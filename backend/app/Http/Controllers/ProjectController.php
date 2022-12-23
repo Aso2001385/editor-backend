@@ -18,6 +18,7 @@ use App\Http\Resources\ProjectResource;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\RequestException;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -232,7 +233,7 @@ class ProjectController extends Controller
                     ])
                     ->post(config('markdownapi.url'),[
                         'text'=>$page['contents']
-                    ])->body();
+                    ])->throw()->body();
 
                     
                     // $response=str_replace(array("\r\n", "\r", "\n"), "",$response->body());
@@ -243,7 +244,7 @@ class ProjectController extends Controller
                     // $file_handle = fopen( 'logs/'.$page['id'].'.html', "w");
                     // fwrite( $file_handle, $response);
                     // fclose($file_handle);
-
+                    // Storage::disk('local')->put($page['id'].'.html', $responce);
                 }
                 return response()->json($pages, Response::HTTP_OK);
             }
