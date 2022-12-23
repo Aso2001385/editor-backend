@@ -40,7 +40,6 @@ class ProjectController extends Controller
     public function store(CreateProjectRequest $request)
     {
         //
-        $request['user_id']=Auth::id();
         $request['uuid']=(string) Str::uuid();
         $project = Project::create($request->all());
 
@@ -77,17 +76,17 @@ class ProjectController extends Controller
             $pages=Page::where('project_id','=',$project['id'])->get();
             $project=Project::create([
                 'uuid'=>(string) Str::uuid(),
-                'user_id'=>Auth::id(),
+                'user_id'=>$request['user_id'],
                 'name'=>$request['name'],
                 'ui'=>$project['ui']
             ]);
 
             ProjectUser::create([
                 'project_id'=>$project['id'],
-                'user_id'=>Auth::id()
+                'user_id'=>$project['user_id']
             ]);
 
-            $user_designs=UserDesign::where('user_id','=',Auth::id())->get();
+            $user_designs=UserDesign::where('user_id','=',$request['user_id'])->get();
 
             foreach($user_designs as $user_design)
             {
@@ -102,7 +101,7 @@ class ProjectController extends Controller
                 $pages_info=[
                     'project_id'=>$project['id'],
                     'number'=>$page['number'],
-                    'user_id'=>Auth::id(),
+                    'user_id'=>$request['user_id'],
                     'design_id'=>$page['design_id'],
                     'title'=>$page['title'],
                     'contents'=>$page['contents']
@@ -112,7 +111,7 @@ class ProjectController extends Controller
 
                 if(count($user_design)==0)
                 {
-                    $pages_info['design_id']=UserDesign::where('user_id','=',Auth::id())->min('design_id');
+                    $pages_info['design_id']=UserDesign::where('user_id','=',$request['user_id'])->min('design_id');
                 }
 
                 Page::create($pages_info);
@@ -126,7 +125,6 @@ class ProjectController extends Controller
     {   
         if(isset(Project::where('uuid','=',$request['uuid'])->first()['id'])){
             $request['project_id']=Project::where('uuid','=',$request['uuid'])->first()['id'];
-            $request['user_id']=Auth::id();
             unset($request['uuid']);
             $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->all());
             return response()->json(true, Response::HTTP_OK);
@@ -162,7 +160,6 @@ class ProjectController extends Controller
         //
         if(isset(Project::where('uuid','=',$id)->first()['id'])){
             $project=Project::where('uuid','=',$id)->first();
-            $request['user_id']=Auth::id();
             $project->update($request->all());
             return response()->json($project, Response::HTTP_OK);
         }
