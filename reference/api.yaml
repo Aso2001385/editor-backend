@@ -236,6 +236,37 @@ paths:
         - delete
         - User
         - Paths
+  /api/users/designs:
+    get:
+      summary: loginしているUserのdesign一覧
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  designs:
+                    $ref: '#/components/schemas/Design'
+              examples:
+                Example 1:
+                  value:
+                    designs:
+                      id: 1
+                      user_id: 1
+                      name: design1
+                      point: 50
+                      contents: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
+      operationId: get-api-users-design
+    parameters: []
+  /api/users/projects:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-users-projects
   /api/users/password:
     put:
       summary: User　パスワード変更
@@ -807,21 +838,14 @@ paths:
                   maximum: 500
                   example: 5
                 contents:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    updated_at:
-                      type: string
-                      format: date-time
-                      example: '2010-12-01 12:02:00'
+                  type: string
+                  example: '{ "name": "Tanaka", "age": 26 }'
             examples:
-              example:
+              Example 1:
                 value:
                   name: design1
                   point: 5
+                  contents: '{ "name": "Tanaka", "age": 26 }'
       description: デザイン作成
       tags:
         - Design
@@ -831,7 +855,7 @@ paths:
   '/api/designs/{id}':
     parameters:
       - schema:
-          type: integer
+          type: string
         name: id
         in: path
         required: true
@@ -870,6 +894,39 @@ paths:
                     user_id: 1
                     name: design1
       description: 特定idのデザイン情報を編集
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: design1
+                point:
+                  type: integer
+                  minimum: 0
+                  maximum: 500
+                  example: 5
+                contents:
+                  type: string
+                  example: '{ "name": "Tanaka", "age": 26 }'
+            examples:
+              Example 1:
+                value:
+                  name: design1
+                  point: 5
+                  contents: '{ "name": "Tanaka", "age": 26 }'
+          application/xml:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                point:
+                  type: integer
+                contents:
+                  type: string
     delete:
       summary: Design情報削除
       operationId: delete-designs-id
@@ -1083,7 +1140,7 @@ components:
           uuid: 095be615-a8ad-4c33-8e9c-c7612fbf6c9f
           user_id: 1
           name: Project1
-          ui: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
+          ui: '{ "name": "Tanaka", "age": 26 }'
       description: プロジェクトモデル
       properties:
         id:
@@ -1108,7 +1165,7 @@ components:
           maxLength: 50
         ui:
           type: string
-          example: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
+          example: '{ "name": "Tanaka", "age": 26 }'
       required:
         - id
         - user_id
@@ -1161,7 +1218,7 @@ components:
           user_id: 1
           name: design1
           point: 50
-          contents: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
+          contents: '{ "name": "Tanaka", "age": 26 }'
       x-tags:
         - Model
         - Design
@@ -1190,7 +1247,7 @@ components:
           example: 50
         contents:
           type: string
-          example: '{     \\\"id\\\": 1,     \\\"name\\\": \\\"ABC\\\",     \\\"updated_at\\\": \\\"2010-12-01 12:02:00\\\"   }'
+          example: '{ "name": "Tanaka", "age": 26 }'
     ProjectDesign:
       title: ProjectDesign
       x-stoplight:
@@ -1328,7 +1385,8 @@ components:
           minimum: 1
           maximum: 255
         setting:
-          type: object
+          type: string
+          example: '{ "name": "Tanaka", "age": 26 }'
 tags:
   - name: Model
   - name: Paths

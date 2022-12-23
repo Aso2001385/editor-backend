@@ -43,6 +43,7 @@ Route::post('cors/test',[LoginController::class,'testPost']);
 // Route::apiResource('users', UserController::class);
 Route::apiResource('users', UserController::class)->only(['store']);
 Route::apiResource('users', UserController::class)->except(['store'])->middleware('auth');
+Route::post('users/register',[UserController::class, 'register']);
 
 Route::post('verifications/test',[VerificationController::class,'test']);
 Route::post('verifications',[VerificationController::class,'verificationCheck']);
