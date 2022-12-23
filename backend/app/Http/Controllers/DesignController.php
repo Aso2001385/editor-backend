@@ -38,13 +38,12 @@ class DesignController extends Controller
     public function store(CreateDesignRequest $request)
     {
         //
-        $request['user_id']=Auth::id();
         $design = Design::create($request->all());
         UserDesign::create([
             'design_id' => $design['id'],
             'user_id' => $design['user_id'],
         ]);
-        $projects=ProjectUser::where('user_id','=',Auth::id())->get();
+        $projects=ProjectUser::where('user_id','=',$request['user_id'])->get();
         if(isset($projects)){
             foreach($projects as $project){
                 ProjectDesign::create([
@@ -71,17 +70,17 @@ class DesignController extends Controller
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
 
-    public function buy($id)
+    public function buy($id,Request $request)
     {   
         if(isset(Design::where('uuid','=',$id)->first()['id'])){
             $design=Design::where('uuid','=',$id)->first();
-            $user = User::find(Auth::id());
+            $user = User::find($request['user_id']);
             $user['point'] = $user['point'] - $design['point'];
 
             if ($user['point'] >= 0) {
                 $design_user_info = [
                     'design_id' => $design['id'],
-                    'user_id' => auth()->user()->id
+                    'user_id' => $request['user_id']
                 ];
 
                 $design_user = UserDesign::create($design_user_info);
@@ -165,7 +164,6 @@ class DesignController extends Controller
                 }
 
             });
-            Auth::id();
 
             //データベースUserのpointを100引いたものに変える
             $point -= 100;
