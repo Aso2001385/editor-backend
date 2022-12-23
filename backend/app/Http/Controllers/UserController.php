@@ -64,6 +64,7 @@ class UserController extends Controller
 
     public function register(CreateUserRequest $request)
     {
+        $request['password']=Hash::make($request->password);
         $user=User::create($request->all());
 
         return response()->json($user, Response::HTTP_OK);
