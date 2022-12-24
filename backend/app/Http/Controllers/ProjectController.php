@@ -223,6 +223,8 @@ class ProjectController extends Controller
         if(isset(Project::where('uuid','=',$id)->first()['id'])){
             $project=Project::where('uuid','=',$id)->first();
             $pages=Page::where('project_id','=',$project->id)->get();
+            Storage::disk('local'); //公開時はpublicに変更
+            Storage::makeDirectory($project['name']);
             try{
                 foreach($pages as $page)
                 {
@@ -235,16 +237,11 @@ class ProjectController extends Controller
                         'text'=>$page['contents']
                     ])->throw()->body();
 
+                    $page['project_name']=$project['name'];
                     
-                    // $response=str_replace(array("\r\n", "\r", "\n"), "",$response->body());
-                    
-                    
-                    $page['response']= "<div class="."content".">".$response."</div>";
-                    // // \File::append(storage_path('logs/'.$page['id'].'.html'), $responce);
-                    // $file_handle = fopen( 'logs/'.$page['id'].'.html', "w");
-                    // fwrite( $file_handle, $response);
-                    // fclose($file_handle);
-                    // Storage::disk('local')->put($page['id'].'.html', $responce);
+                    $page['response']= "<html>\n<body>\n<div class=".'"content"'.">\n".$response."</div>\n</body>\n</html>";
+       
+                    Storage::put($project['name'].'/'.$page['id'].'.html', $page['response']);
                 }
                 return response()->json($pages, Response::HTTP_OK);
             }
