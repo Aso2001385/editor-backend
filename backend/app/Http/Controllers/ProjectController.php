@@ -11,6 +11,7 @@ use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
 use App\Models\UserDesign;
 use App\Models\Page;
+use App\Models\Design;
 use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\ProjectCopyRequest;
 use App\Http\Requests\ProjectUpdateRequest;
@@ -223,8 +224,22 @@ class ProjectController extends Controller
         if(isset(Project::where('uuid','=',$id)->first()['id'])){
             $project=Project::where('uuid','=',$id)->first();
             $pages=Page::where('project_id','=',$project->id)->get();
+
+            $save_path = storage_path('app/'.$project['name'].'.zip');
+            $zip = new \ZipArchive();
+            $zip->open($save_path, \ZipArchive::CREATE);
+
             Storage::disk('local'); //公開時はpublicに変更
             Storage::makeDirectory($project['name']);
+            Storage::makeDirectory($project['name'].'/css');
+            Storage::makeDirectory($project['name'].'/js');
+            Storage::makeDirectory($project['name'].'/assets/designs');
+            Storage::makeDirectory($project['name'].'/assets/images');
+            $setting_json_contents_first="[\n";
+            $setting_json_contents_last="]";
+
+            $zip->addEmptyDir('css');
+            $zip->addEmptyDir('assets/images');
             try{
                 foreach($pages as $page)
                 {
@@ -236,14 +251,63 @@ class ProjectController extends Controller
                     ->post(config('markdownapi.url'),[
                         'text'=>$page['contents']
                     ])->throw()->body();
+                    $design=Design::find($page['design_id'])->first();
+                    Storage::put($project['name'].'/assets/designs/'.$design['name'].'.json', $design['contents']);
 
-                    $page['project_name']=$project['name'];
+                    $file_path = storage_path('app/'. $project['name'].'/assets/designs/'.$design['name'].'.json');
+                    $zip->addFile($file_path,'assets/designs/'.$design['name'].'.json');
                     
+                    $setting_json_contents[$page['number']]="\t{\n\t\t".'"name":"'.$page['title'].'"'.",\n\t\t".'"design":"'.$design['name'].'"'.",\n\t\t".'"number":'.$page['number']."\n\t},\n";
                     $page['response']= "<html>\n<body>\n<div class=".'"content"'.">\n".$response."</div>\n</body>\n</html>";
-       
-                    Storage::put($project['name'].'/'.$page['id'].'.html', $page['response']);
+                    Storage::put($project['name'].'/'.$page['title'].'_'.$page['number'].'.html', $page['response']);
+
+                    $file_path = storage_path('app/'. $project['name'].'/'.$page['title'].'_'.$page['number'].'.html');
+                    $zip->addFile($file_path, $page['title'].'_'.$page['number'].'.html');
                 }
-                return response()->json($pages, Response::HTTP_OK);
+
+                for($i=1;$i<=count($setting_json_contents);$i++)
+                {
+                    if($i==1)
+                    {
+                        $content=$setting_json_contents_first.$setting_json_contents[$i];
+                    }
+                    else if($i==count($setting_json_contents))
+                    {
+                        $content=$content.$setting_json_contents[$i].$setting_json_contents_last;
+                    }
+                    else
+                    {
+                        $content=$content.$setting_json_contents[$i];
+                    }
+                }
+
+                Storage::put($project['name'].'/assets/settings.json', $content);
+
+                $file_path = storage_path('app/'. $project['name'].'/assets/settings.json');
+                $zip->addFile($file_path, 'assets/settings.json');
+
+                $design_setting_content="
+export function styleSetter(tags) {
+    const root = document.querySelector(':root')
+    Object.keys(tags).forEach(tag => {
+        Object.keys(tags[tag].attributes).forEach(attribute => {
+            root.style.setProperty(\n\t\t\t\t"
+                .'`--${tag}-${attribute}`,'
+                ."\n\t\t\t\ttags[tag].attributes[attribute].value + tags[tag].attributes[attribute].unit
+            )
+        })
+    })
+}";
+
+                Storage::put($project['name'].'/js/design-setting.js', $design_setting_content);
+
+                $file_path = storage_path('app/'. $project['name'].'/js/design-setting.js');
+                $zip->addFile($file_path, 'js/design-setting.js');
+                
+                $zip->close();
+
+                return response()->download($save_path);
+                // return response()->download($save_path)->deleteFileAfterSend();
             }
             catch(\GuzzleHttp\Exception\ConnectException $e)
             {
