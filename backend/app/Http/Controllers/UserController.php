@@ -85,11 +85,6 @@ class UserController extends Controller
         return response()->json(new UserResource(User::findOrFail($user->id)), Response::HTTP_OK);
     }
 
-    public function designs()
-    {
-        return response()->json(new UserDesignResource(User::findOrFail(Auth::id())), Response::HTTP_OK);
-    }
-
     public function projects()
     {
         return response()->json(new UserProjectResource(User::findOrFail(Auth::id())), Response::HTTP_OK);
