@@ -20,12 +20,13 @@ use App\Http\Controllers\VerificationController;
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('users/designs',[DesignController::class, 'getUserDesigns']);
+    Route::get('users/designs',[UserController::class, 'designs']);
+    Route::get('users/projects',[UserController::class, 'projects']);
     Route::apiResource('users', UserController::class)->except(['store']);
     Route::put('users/password', [UserController::class, 'passwordUpdate']);
     Route::post('users/search', [UserController::class, 'search']);
 
-    Route::get('users/projects',[UserController::class, 'projects']);
+
 
     Route::post('logout', [LoginController::class, 'logout']);
 

@@ -10,7 +10,6 @@ use App\Models\Design;
 use App\Models\UserDesign;
 use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
-use App\Http\Resources\UserDesignResource;
 use Exception;
 use App\Http\Requests\CreateDesignRequest;
 use App\Http\Requests\DesignUpdateRequest;
@@ -29,16 +28,6 @@ class DesignController extends Controller
 
         return response()->json($designs, Response::HTTP_OK);
     }
-
-
-    public function getUserDesigns()
-    {
-        logger()->error('？？？');
-        return response()->json('通過');
-        // return response()->json(User::find(Auth::id()));
-        // return response()->json(new UserDesignResource(User::findOrFail(Auth::id())), Response::HTTP_OK);
-    }
-
 
     /**
      * Store a newly created resource in storage.

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+
+use Illuminate\Support\Facades\Auth;
 use App\Mail\VerificationMail;
 use App\Models\User;
 use App\Models\UserVerifications;
@@ -83,6 +85,11 @@ class UserController extends Controller
         //$user->projects;
         $user = new UserResource(User::findOrFail($user->id));
         return response()->json(new UserResource(User::findOrFail($user->id)), Response::HTTP_OK);
+    }
+
+    public function designs()
+    {
+        return response()->json(new UserDesignResource(User::findOrFail(Auth::id())), Response::HTTP_OK);
     }
 
     public function projects()
