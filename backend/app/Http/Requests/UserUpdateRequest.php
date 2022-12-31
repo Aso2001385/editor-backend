@@ -28,16 +28,15 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'class' => ['required','integer','min:0','max:1'],
-            'name' => ['required','string','max:50'],
-            'email' => ['required','email','max:50','unique:users'],
+            'class' => ['integer','min:0','max:1'],
+            'name'  => ['string','max:50'],
+            'email' => ['email','max:50','unique:users'],
         ];
     }
 
     public function messages()
     {
         return[
-            '*.required' => '入力してください',
             'class.integer' => '数値で入力してください',
             'class.min' => '1か0で入力してください',
             'class.max' => '1か0で入力してください',
