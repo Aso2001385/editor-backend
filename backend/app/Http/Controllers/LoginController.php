@@ -7,6 +7,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserLoginRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Exception;
 
 class LoginController extends Controller
 {
@@ -21,14 +23,21 @@ class LoginController extends Controller
         return response()->json($request,200);
     }
 
-    public function login(UserLoginRequest $request)
-    {
-        $user=User::findOrFail($request['id']);
-        if (Hash::check($request['password'],$user['password'])) {
+    public function login(UserLoginRequest $request){
+
+        try{
+            $user = User::where('email',$request['email'])->first();
+            if($user==null) throw new Exception;
             session(['user' => $user]);
-            return response()->json($user, Response::HTTP_OK);
+            if (!(Hash::check($request['password'], $user['password']))) throw new Exception;
+            $response = [
+                'user' => $user
+            ];
+
+        }catch(Exception $e){
+            return response()->json($e,Response::HTTP_UNAUTHORIZED);
         }
-        return response()->json([], Response::HTTP_UNAUTHORIZED);
+        return response()->json($response,Response::HTTP_OK);
     }
 
     public function logout(Request $request)
