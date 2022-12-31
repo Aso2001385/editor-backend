@@ -105,7 +105,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserEditRequest $request, User $user)
+    public function update(UserUpdateRequest $request, User $user)
     {
         //
         $user->update($request->all());
