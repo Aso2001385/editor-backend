@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\TestMail;
 use App\Models\User;
 use App\Models\UserVerifications;
+use App\Mail\TestMail;
 use App\Mail\VerificationMail;
-
 
 class VerificationController extends Controller
 {
@@ -41,7 +40,7 @@ class VerificationController extends Controller
 
     public function reSend($email)
     {
-    
+
         $code=str_pad(random_int(0,999999),6,0, STR_PAD_LEFT);
         $userVerification=UserVerifications::updateOrCreate(['email'=>$email],['code'=>$code]);
         $mail_address = $email;

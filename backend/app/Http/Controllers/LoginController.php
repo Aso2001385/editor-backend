@@ -14,7 +14,6 @@ class LoginController extends Controller
         return response()->json(Auth::user()->name,200);
     }
 
-
     public function testPost(Request $request){
         return response()->json($request,200);
     }
