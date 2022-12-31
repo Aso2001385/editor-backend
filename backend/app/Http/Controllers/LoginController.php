@@ -30,14 +30,11 @@ class LoginController extends Controller
             if($user==null) throw new Exception;
             session(['user' => $user]);
             if (!(Hash::check($request['password'], $user['password']))) throw new Exception;
-            $response = [
-                'user' => $user
-            ];
 
         }catch(Exception $e){
             return response()->json($e,Response::HTTP_UNAUTHORIZED);
         }
-        return response()->json($response,Response::HTTP_OK);
+        return response()->json($user,Response::HTTP_OK);
     }
 
     public function logout(Request $request)
