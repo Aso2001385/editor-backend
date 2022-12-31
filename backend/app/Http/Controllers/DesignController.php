@@ -3,17 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Design;
 use App\Models\UserDesign;
-use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
-use Exception;
+use App\Models\ProjectUser;
 use App\Http\Requests\CreateDesignRequest;
 use App\Http\Requests\DesignUpdateRequest;
-use Illuminate\Support\Collection;
 
 class DesignController extends Controller
 {

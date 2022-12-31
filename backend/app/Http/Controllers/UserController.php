@@ -2,32 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-
 use Illuminate\Support\Facades\Auth;
 use App\Mail\VerificationMail;
 use App\Models\User;
 use App\Models\UserVerifications;
-use App\Models\Design;
-use App\Models\UserDesign;
-use App\Models\Project;
-use App\Models\ProjectUser;
 use App\Http\Resources\UserResource;
-use App\Http\Resources\UserDesignResource;
-use App\Http\Resources\UserProjectResource;
-use Exception;
-use Illuminate\Database\QueryException;
-use Illuminate\Hashing\HashManager;
-use Illuminate\Support\Facades\Http;
 use App\Http\Requests\CreateUserRequest;
-use App\Http\Requests\PasswordUpdateUserRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\UserSearchRequest;
-
-
+use App\Http\Requests\PasswordUpdateUserRequest;
+use App\Http\Resources\UserDesignResource;
+use App\Http\Resources\UserProjectResource;
 
 
 class UserController extends Controller

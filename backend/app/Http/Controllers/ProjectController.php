@@ -92,7 +92,7 @@ class ProjectController extends Controller
             foreach($user_designs as $user_design)
             {
                 ProjectDesign::create([
-                    'project_id'=>$project_id,
+                    'project_id'=>$project->id,
                     'design_id'=>$user_design['design_id']
                 ]);
             }
@@ -123,7 +123,7 @@ class ProjectController extends Controller
     }
 
     public function save(Request $request)
-    {   
+    {
         if(isset(Project::where('uuid','=',$request['uuid'])->first()['id'])){
             $request['project_id']=Project::where('uuid','=',$request['uuid'])->first()['id'];
             $request['user_id']=Auth::id();
