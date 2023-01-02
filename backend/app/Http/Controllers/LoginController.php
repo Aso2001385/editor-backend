@@ -34,7 +34,7 @@ class LoginController extends Controller
         }catch(Exception $e){
             return response()->json($e,Response::HTTP_UNAUTHORIZED);
         }
-        return response()->json($user,Response::HTTP_OK);
+        return response()->json($user,Response::HTTP_OK)->header('Access-Control-Allow-Origin','*');
     }
 
     public function logout(Request $request)
