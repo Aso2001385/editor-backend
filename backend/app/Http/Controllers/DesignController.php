@@ -223,8 +223,11 @@ class DesignController extends Controller
         //
         if(isset(Design::where('uuid','=',$id)->first()['id'])){
             $design=Design::where('uuid','=',$id)->first();
-            $design->update($request->all());
-            return response()->json($design, Response::HTTP_OK);
+            if($design['user_id']==AUth::id()){
+                $design->update($request->all());
+                return response()->json($design, Response::HTTP_OK);
+            }
+            return response()->json([], Response::HTTP_UNAUTHORIZED); 
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
