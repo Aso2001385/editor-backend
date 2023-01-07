@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Design;
@@ -21,7 +23,7 @@ class DesignController extends Controller
      */
     public function index()
     {
-        $designs = Design::all()->toArray();
+        $designs = User::findOrFail(Auth::id())->designs;
 
         return response()->json($designs, Response::HTTP_OK);
     }
@@ -35,13 +37,15 @@ class DesignController extends Controller
     public function store(CreateDesignRequest $request)
     {
         //
-        $request['user_id']=Auth::id();
+        $request['user_id'] = Auth::id();
+        $request['uuid'] = (string) Str::uuid();
+        logger()->error($request->except(['contents']));
         $design = Design::create($request->all());
         UserDesign::create([
-            'design_id' => $design['id'],
-            'user_id' => $design['user_id'],
+            'design_id' => $design->id,
+            'user_id' => $design->user_id,
         ]);
-        $projects=ProjectUser::where('user_id','=',Auth::id())->get();
+        $projects = ProjectUser::where('user_id','=',Auth::id())->get();
         if(isset($projects)){
             foreach($projects as $project){
                 ProjectDesign::create([
@@ -227,7 +231,7 @@ class DesignController extends Controller
                 $design->update($request->all());
                 return response()->json($design, Response::HTTP_OK);
             }
-            return response()->json([], Response::HTTP_UNAUTHORIZED); 
+            return response()->json([], Response::HTTP_UNAUTHORIZED);
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
