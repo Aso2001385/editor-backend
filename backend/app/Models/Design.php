@@ -20,10 +20,6 @@ class Design extends Model
 
     protected $datas = ['deleted_at'];
 
-    protected $hidden = [
-        'id',
-    ];
-
     public function projects()
     {
         return $this->belongsToMany(Project::class,ProjectDesign::class,'project_id','design_id')
