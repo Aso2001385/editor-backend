@@ -27,16 +27,15 @@ class DesignUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required','min:1','max:50'],
+            'name' => ['min:1','max:50'],
             'point' => ['integer','min:0','max:500'],
-            'contents' => ['required','json']
+            'contents' => ['json']
         ];
     }
 
     public function messages()
     {
         return[
-            '*.required' => '入力してください',
             'name.max' => '50文字以内で入力してください',
             'point.integer' => '数値で入力してください',
             'point.min' => '0ポイント以上で入力してください',
