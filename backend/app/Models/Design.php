@@ -15,7 +15,8 @@ class Design extends Model
         'user_id',
         'name',
         'point',
-        'contents'
+        'contents',
+        'preview'
     ];
 
     protected $datas = ['deleted_at'];

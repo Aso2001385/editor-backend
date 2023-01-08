@@ -13,6 +13,10 @@ use App\Models\ProjectDesign;
 use App\Models\ProjectUser;
 use App\Http\Requests\CreateDesignRequest;
 use App\Http\Requests\DesignUpdateRequest;
+use App\Http\Resources\DesignCollection;
+use App\Http\Resources\DesignResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\File;
 
 class DesignController extends Controller
 {
@@ -25,7 +29,7 @@ class DesignController extends Controller
     {
         $designs = User::findOrFail(Auth::id())->designs;
 
-        return response()->json($designs, Response::HTTP_OK);
+        return response()->json(new DesignCollection($designs), Response::HTTP_OK);
     }
 
     /**
@@ -65,11 +69,14 @@ class DesignController extends Controller
      */
     public function show($id)
     {
-        if(isset(Design::where('uuid','=',$id)->first()['id'])){
-            $design=Design::where('uuid','=',$id)->first();
-            return response()->json($design, Response::HTTP_OK);
+
+        try{
+            $design=Design::where('uuid',$id)->firstOrFail();
+            return response()->json(new DesignResource($design), Response::HTTP_OK);
+        }catch(ModelNotFoundException $e){
+            return response()->json($e, Response::HTTP_NOT_FOUND);
         }
-        return response()->json(false, Response::HTTP_NOT_FOUND);
+
     }
 
     public function buy($id)
@@ -93,6 +100,51 @@ class DesignController extends Controller
             }
 
             return response()->json($design, Response::HTTP_OK);
+        }
+        return response()->json(false, Response::HTTP_NOT_FOUND);
+    }
+
+
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(DesignUpdateRequest $request, $id)
+    {
+        try{
+            $design=Design::where('uuid',$id)->firstOrFail();
+            if($design['user_id'] == Auth::id()){
+                $preview = $request->preview;
+                $path = 'previews/designs/'.$design->uuid.'.txt';
+                Storage::put($path, $preview);
+                $design->update($request->except('preview'));
+                return response()->json(new DesignResource($design), Response::HTTP_OK);
+            }
+            return response()->json('',401);
+        }catch(ModelNotFoundException $e){
+            return response()->json($e, Response::HTTP_NOT_FOUND);
+        }
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        if(isset(Design::where('uuid','=',$id)->first()['id'])){
+            $design=Design::where('uuid','=',$id)->first();
+            $design->delete();
+
+            return response()->json(true, Response::HTTP_OK);
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
@@ -214,42 +266,7 @@ class DesignController extends Controller
 
 
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(DesignUpdateRequest $request, $id)
-    {
-        //
-        if(isset(Design::where('uuid','=',$id)->first()['id'])){
-            $design=Design::where('uuid','=',$id)->first();
-            if($design['user_id']==AUth::id()){
-                $design->update($request->all());
-                return response()->json($design, Response::HTTP_OK);
-            }
-            return response()->json([], Response::HTTP_UNAUTHORIZED);
-        }
-        return response()->json(false, Response::HTTP_NOT_FOUND);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        if(isset(Design::where('uuid','=',$id)->first()['id'])){
-            $design=Design::where('uuid','=',$id)->first();
-            $design->delete();
-
-            return response()->json(true, Response::HTTP_OK);
-        }
-        return response()->json(false, Response::HTTP_NOT_FOUND);
-    }
 }
+
+
+
