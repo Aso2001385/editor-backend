@@ -40,10 +40,8 @@ class DesignController extends Controller
      */
     public function store(CreateDesignRequest $request)
     {
-        //
         $request['user_id'] = Auth::id();
         $request['uuid'] = (string) Str::uuid();
-        logger()->error($request->except(['contents']));
         $design = Design::create($request->all());
         UserDesign::create([
             'design_id' => $design->id,

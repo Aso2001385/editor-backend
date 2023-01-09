@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Design;
+use App\Models\Project;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PageResource extends JsonResource
@@ -16,10 +18,10 @@ class PageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'project_id' => $this->project_id,
+            'project_uuid' => Project::find($this->project_id)->uuid,
             'number' => $this->number,
             'user_id' => $this->user_id,
-            'design_id' => $this->design_id,
+            'design_uuid' => Design::find($this->design_id)->uuid,
             'title' => $this->title,
             'contents' => $this->contents,
             'created_at' => $this->created_at,

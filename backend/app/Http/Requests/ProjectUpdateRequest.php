@@ -29,16 +29,16 @@ class ProjectUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required','string','max:50'],
+            'title' => ['required','string','max:50'],
         ];
     }
 
     public function messages()
     {
         return[
-            'name.required' => '入力してください',
-            'name.max' => '50文字以内で入力してください',
-            'name.string' => '文字列で入力してください'
+            'title.required' => '入力してください',
+            'title.max' => '50文字以内で入力してください',
+            'title.string' => '文字列で入力してください'
         ];
     }
 
