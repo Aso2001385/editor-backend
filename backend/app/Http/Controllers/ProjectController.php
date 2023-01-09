@@ -9,12 +9,16 @@ use Illuminate\Support\Str;
 use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
+use App\Models\User;
 use App\Models\UserDesign;
 use App\Models\Page;
 use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\ProjectCopyRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Http\Resources\PageResource;
+use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
+use Exception;
 
 class ProjectController extends Controller
 {
@@ -25,10 +29,8 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //プロジェクトテーブルから全件取得
-        $projects = Project::all()->toArray();
-
-        return response()->json($projects, Response::HTTP_OK);
+        $projects = User::findOrFail(Auth::id())->projects;
+        return response()->json(new ProjectCollection($projects), Response::HTTP_OK);
     }
 
     /**
@@ -49,16 +51,16 @@ class ProjectController extends Controller
             'user_id' => $project['user_id']
         ]);
 
-        $page=Page::create([
+        Page::create([
             'project_id'=>$project['id'],
-            'number'=>1,
             'user_id'=>$project['user_id'],
             'design_id'=>1,
+            'number'=>1,
             'title'=>'新規ページ',
             'contents'=>'# 新規ページ',
         ]);
 
-        $user_designs = UserDesign::where('user_id', '=', $project['user_id'])->select('design_id')->get();
+        $user_designs = UserDesign::where('user_id', $project->user_id)->select('design_id')->get();
 
         foreach ($user_designs as $user_design) {
             ProjectDesign::create([
@@ -124,14 +126,20 @@ class ProjectController extends Controller
 
     public function save(Request $request)
     {
-        if(isset(Project::where('uuid','=',$request['uuid'])->first()['id'])){
-            $request['project_id']=Project::where('uuid','=',$request['uuid'])->first()['id'];
+
+        try {
+
+            $request['project_id']=Project::where('uuid',$request['uuid'])->firstOrFail()->id;
             $request['user_id']=Auth::id();
-            unset($request['uuid']);
-            $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->all());
-            return response()->json(true, Response::HTTP_OK);
+            $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->except(['uuid']));
+            return response()->json(new PageResource($page), Response::HTTP_OK);
+
+        } catch (Exception $e) {
+
+            return response()->json($e, Response::HTTP_NOT_FOUND);
         }
-        return response()->json(false, Response::HTTP_NOT_FOUND);
+
+
     }
 
     /**

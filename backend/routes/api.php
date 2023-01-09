@@ -30,9 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('logout', [LoginController::class, 'logout']);
 
-
-    Route::apiResource('projects', ProjectController::class);
     Route::put('projects/pages', [ProjectController::class, 'save']);
+    Route::apiResource('projects', ProjectController::class);
+
     Route::post('projects/{id}/copy', [ProjectController::class, 'copy']);
 
     Route::delete('page/{id}',[ProjectController::class,'pageDelete']);

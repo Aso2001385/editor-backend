@@ -18,10 +18,6 @@ class Project extends Model
     ];
     protected $datas = ['deleted_at'];
 
-    protected $hidden = [
-        'id',
-    ];
-
     protected $casts = [
         'ui'  => 'json'
     ];
