@@ -18,6 +18,7 @@ use App\Http\Requests\ProjectUpdateRequest;
 use App\Http\Resources\PageResource;
 use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
+use App\Models\Design;
 use Exception;
 
 class ProjectController extends Controller
@@ -127,17 +128,20 @@ class ProjectController extends Controller
     public function save(Request $request)
     {
 
-        try {
+        // try {
 
-            $request['project_id']=Project::where('uuid',$request['uuid'])->firstOrFail()->id;
+            $request['project_id']=Project::where('uuid',$request['project_uuid'])->firstOrFail()->id;
+            $request['design_id']=Design::where('uuid',$request['design_uuid'])->firstOrFail()->id;
             $request['user_id']=Auth::id();
-            $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->except(['uuid']));
+
+            $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->except(['project_uuid','design_uuid']));
+            logger()->error($page);
             return response()->json(new PageResource($page), Response::HTTP_OK);
 
-        } catch (Exception $e) {
+        // } catch (Exception $e) {
 
-            return response()->json($e, Response::HTTP_NOT_FOUND);
-        }
+        //     return response()->json($e, Response::HTTP_NOT_FOUND);
+        // }
 
 
     }
