@@ -119,7 +119,8 @@ class DesignController extends Controller
             if($design['user_id'] == Auth::id()){
                 $preview = $request->preview;
                 $path = 'previews/designs/'.$design->uuid.'.txt';
-                Storage::put($path, $preview);
+                if(isset($preview))
+                    Storage::put($path, $preview);
                 $design->update($request->except('preview'));
                 return response()->json(new DesignResource($design), Response::HTTP_OK);
             }
