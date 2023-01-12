@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\DesignController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\VerificationController;
@@ -34,8 +35,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('projects', ProjectController::class);
 
     Route::post('projects/{id}/copy', [ProjectController::class, 'copy']);
+    Route::get('projects/{uuid}/pages/{number}', [PageController::class, 'show']);
 
-    Route::delete('page/{id}',[ProjectController::class,'pageDelete']);
+    Route::put('pages/{id}',[PageController::class,'save']);
+    Route::delete('pages/{id}',[ProjectController::class,'pageDelete']);
 
 
     Route::apiResource('designs', DesignController::class);

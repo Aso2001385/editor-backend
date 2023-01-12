@@ -21,7 +21,6 @@ class CreatePagesTable extends Migration
             $table->foreignId('design_id')->constrained('designs');
             $table->string('title', 50)->nullable();
 		    $table->text('contents')->nullable();
-            $table->unique(['project_id', 'number']);
             $table->timestamps();
         });
     }

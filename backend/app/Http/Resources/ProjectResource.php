@@ -17,6 +17,7 @@ class ProjectResource extends JsonResource
     {
 
         $last_page = $this->pages->sortByDesc('updated_at')->first();
+        $pages = Page::get();
 
         return [
             'uuid'=>$this->uuid,
@@ -31,7 +32,7 @@ class ProjectResource extends JsonResource
             ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'pages' => new PageCollection($this->pages),
+            'pages' => PagesResource::collection($this->pages)
         ];
     }
 }

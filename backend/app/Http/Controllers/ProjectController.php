@@ -16,6 +16,7 @@ use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\ProjectCopyRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\Http\Resources\PageResource;
+use App\Http\Resources\PagesResource;
 use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
 use App\Models\Design;
@@ -52,7 +53,7 @@ class ProjectController extends Controller
             'user_id' => $project['user_id']
         ]);
 
-        Page::create([
+        $page = Page::create([
             'project_id'=>$project['id'],
             'user_id'=>$project['user_id'],
             'design_id'=>1,
@@ -75,8 +76,8 @@ class ProjectController extends Controller
 
     public function copy($id,ProjectCopyRequest $request)
     {
-        if(isset(Project::where('uuid','=',$id)->first()['id'])){
-            $project=Project::where('uuid','=',$id)->first();
+
+            $project=Project::where('uuid',$id)->firstOrFail();
             $pages=Page::where('project_id','=',$project['id'])->get();
             $project=Project::create([
                 'uuid'=>(string) Str::uuid(),
@@ -121,27 +122,28 @@ class ProjectController extends Controller
                 Page::create($pages_info);
             }
             return response()->json($project, Response::HTTP_OK);
-        }
-        return response()->json(false, Response::HTTP_NOT_FOUND);
+
     }
 
     public function save(Request $request)
     {
 
-        // try {
+        try {
 
-            $request['project_id']=Project::where('uuid',$request['project_uuid'])->firstOrFail()->id;
+            $project_id = Project::where('uuid',$request['project_uuid'])->firstOrFail()->id;
+            $request['user_id'] = Auth::id();
+
+
             $request['design_id']=Design::where('uuid',$request['design_uuid'])->firstOrFail()->id;
-            $request['user_id']=Auth::id();
-
-            $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->except(['project_uuid','design_uuid']));
-            logger()->error($page);
+            $request['design_id']=Design::where('uuid',$request['design_uuid'])->firstOrFail()->id;
+            $page = Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->except(['project_uuid','design_uuid']));
             return response()->json(new PageResource($page), Response::HTTP_OK);
 
-        // } catch (Exception $e) {
+        } catch (Exception $e) {
 
-        //     return response()->json($e, Response::HTTP_NOT_FOUND);
-        // }
+            return response()->json($e, Response::HTTP_NOT_FOUND);
+
+        }
 
 
     }
@@ -176,7 +178,7 @@ class ProjectController extends Controller
             $project=Project::where('uuid','=',$id)->first();
             $request['user_id']=Auth::id();
             $project->update($request->all());
-            return response()->json($project, Response::HTTP_OK);
+            return response()->json(new ProjectResource($project), Response::HTTP_OK);
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
