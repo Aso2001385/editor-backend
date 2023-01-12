@@ -15,16 +15,24 @@ class ProjectResource extends JsonResource
      */
     public function toArray($request)
     {
+
+        $last_page = $this->pages->sortByDesc('updated_at')->first();
+        $pages = Page::get();
+
         return [
             'uuid'=>$this->uuid,
             'user_id' => $this->user_id,
             'name' => $this->name,
             'ui' => $this->ui,
             'count'=>count(Page::where('project_id','=',$this->id)->get()),
-            'last_update'=>Page::where('project_id','=',$this->id)->max('updated_at'),
+            'last'=> [
+                'number' => $last_page->number,
+                'contents' => $last_page->contents,
+                'updated_at' => $last_page->updated_at
+            ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'pages' => new PageCollection($this->pages),
+            'pages' => PagesResource::collection($this->pages)
         ];
     }
 }

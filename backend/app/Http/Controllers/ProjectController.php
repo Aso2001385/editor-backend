@@ -9,12 +9,16 @@ use Illuminate\Support\Str;
 use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
+use App\Models\User;
 use App\Models\UserDesign;
 use App\Models\Page;
 use App\Models\Design;
 use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\ProjectCopyRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Http\Resources\PageResource;
+use App\Http\Resources\PagesResource;
+use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\RequestException;
@@ -30,10 +34,8 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //プロジェクトテーブルから全件取得
-        $projects = Project::all()->toArray();
-
-        return response()->json($projects, Response::HTTP_OK);
+        $projects = User::findOrFail(Auth::id())->projects;
+        return response()->json(new ProjectCollection($projects), Response::HTTP_OK);
     }
 
     /**
@@ -54,16 +56,16 @@ class ProjectController extends Controller
             'user_id' => $project['user_id']
         ]);
 
-        $page=Page::create([
+        $page = Page::create([
             'project_id'=>$project['id'],
-            'number'=>1,
             'user_id'=>$project['user_id'],
             'design_id'=>1,
+            'number'=>1,
             'title'=>'新規ページ',
             'contents'=>'# 新規ページ',
         ]);
 
-        $user_designs = UserDesign::where('user_id', '=', $project['user_id'])->select('design_id')->get();
+        $user_designs = UserDesign::where('user_id', $project->user_id)->select('design_id')->get();
 
         foreach ($user_designs as $user_design) {
             ProjectDesign::create([
@@ -77,8 +79,8 @@ class ProjectController extends Controller
 
     public function copy($id,ProjectCopyRequest $request)
     {
-        if(isset(Project::where('uuid','=',$id)->first()['id'])){
-            $project=Project::where('uuid','=',$id)->first();
+
+            $project=Project::where('uuid',$id)->firstOrFail();
             $pages=Page::where('project_id','=',$project['id'])->get();
             $project=Project::create([
                 'uuid'=>(string) Str::uuid(),
@@ -123,20 +125,30 @@ class ProjectController extends Controller
                 Page::create($pages_info);
             }
             return response()->json($project, Response::HTTP_OK);
-        }
-        return response()->json(false, Response::HTTP_NOT_FOUND);
+
     }
 
     public function save(Request $request)
     {
-        if(isset(Project::where('uuid','=',$request['uuid'])->first()['id'])){
-            $request['project_id']=Project::where('uuid','=',$request['uuid'])->first()['id'];
-            $request['user_id']=Auth::id();
-            unset($request['uuid']);
-            $page=Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->all());
-            return response()->json(true, Response::HTTP_OK);
+
+        try {
+
+            $project_id = Project::where('uuid',$request['project_uuid'])->firstOrFail()->id;
+            $request['user_id'] = Auth::id();
+
+
+            $request['design_id']=Design::where('uuid',$request['design_uuid'])->firstOrFail()->id;
+            $request['design_id']=Design::where('uuid',$request['design_uuid'])->firstOrFail()->id;
+            $page = Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->except(['project_uuid','design_uuid']));
+            return response()->json(new PageResource($page), Response::HTTP_OK);
+
+        } catch (Exception $e) {
+
+            return response()->json($e, Response::HTTP_NOT_FOUND);
+
         }
-        return response()->json(false, Response::HTTP_NOT_FOUND);
+
+
     }
 
     /**
@@ -169,7 +181,7 @@ class ProjectController extends Controller
             $project=Project::where('uuid','=',$id)->first();
             $request['user_id']=Auth::id();
             $project->update($request->all());
-            return response()->json($project, Response::HTTP_OK);
+            return response()->json(new ProjectResource($project), Response::HTTP_OK);
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
@@ -256,7 +268,7 @@ class ProjectController extends Controller
 
                     $file_path = storage_path('app/'. $project['name'].'/assets/designs/'.$design['name'].'.json');
                     $zip->addFile($file_path,'assets/designs/'.$design['name'].'.json');
-                    
+
                     $setting_json_contents[$page['number']]="\t{\n\t\t".'"name":"'.$page['title'].'"'.",\n\t\t".'"design":"'.$design['name'].'"'.",\n\t\t".'"number":'.$page['number']."\n\t},\n";
                     $page['response']= "<html>\n<body>\n<div class=".'"content"'.">\n".$response."</div>\n</body>\n</html>";
                     Storage::put($project['name'].'/'.$page['title'].'_'.$page['number'].'.html', $page['response']);
@@ -265,19 +277,21 @@ class ProjectController extends Controller
                     $zip->addFile($file_path, $page['title'].'_'.$page['number'].'.html');
                 }
 
+                $content = '';
+
                 for($i=1;$i<=count($setting_json_contents);$i++)
                 {
                     if($i==1)
                     {
-                        $content=$setting_json_contents_first.$setting_json_contents[$i];
+                        $content .= $setting_json_contents_first . $setting_json_contents[$i];
                     }
                     else if($i==count($setting_json_contents))
                     {
-                        $content=$content.$setting_json_contents[$i].$setting_json_contents_last;
+                        $content .= $setting_json_contents[$i] . $setting_json_contents_last;
                     }
                     else
                     {
-                        $content=$content.$setting_json_contents[$i];
+                        $content .= $content . $setting_json_contents[$i];
                     }
                 }
 
@@ -303,7 +317,7 @@ export function styleSetter(tags) {
 
                 $file_path = storage_path('app/'. $project['name'].'/js/design-setting.js');
                 $zip->addFile($file_path, 'js/design-setting.js');
-                
+
                 $zip->close();
 
                 return response()->download($save_path);
