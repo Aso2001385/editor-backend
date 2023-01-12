@@ -235,8 +235,8 @@ class ProjectController extends Controller
 
     public function export($id)
     {
-
         try{
+
             $project = Project::where('uuid',$id)->firstOrFail();
             $pages = Page::where('project_id',$project->id)->get();
 
@@ -266,6 +266,7 @@ class ProjectController extends Controller
                 $page['response'] = CodeTemplate::htmlSet($text,$page['title'],$design['uuid'],$lis);
                 $neo->put($page['title'].'_'.$page['number'].'.html', $page['response']);
             }
+            logger()->error($lis);
 
             $neo->put('assets/settings.json', json_encode($settings));
             $neo->copy('projects/templates/js/design-setting.js','js/design-setting.js');
