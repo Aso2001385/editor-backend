@@ -251,6 +251,8 @@ class ProjectController extends Controller
 
             $settings = [];
 
+            $lis = CodeTemplate::itemSet($pages);
+
             foreach($pages as $index => $page){
                 $number = $index + 1;
                 $text = Markdown::get($page['contents']);
@@ -261,14 +263,17 @@ class ProjectController extends Controller
                     'design' => 'design_'.$number,
                     'number' => $page['number']
                 ];
-                $page['response'] = CodeTemplate::htmlSet($text,$page['title'],$design['uuid']);
+                $page['response'] = CodeTemplate::htmlSet($text,$page['title'],$design['uuid'],$lis);
                 $neo->put($page['title'].'_'.$page['number'].'.html', $page['response']);
             }
 
             $neo->put('assets/settings.json', json_encode($settings));
-            $neo->copy('projects/templates/design-setting.js','js/design-setting.js');
-            $neo->copy('projects/templates/sanitize.css','css/sanitize.css');
-            $neo->copy('projects/templates/variable.css','css/variable.css');
+            $neo->copy('projects/templates/js/design-setting.js','js/design-setting.js');
+            $neo->copy('projects/templates/js/parts/header.js','js/parts/header.js');
+            $neo->copy('projects/templates/css/sanitize.css','css/sanitize.css');
+            $neo->copy('projects/templates/css/variable.css','css/variable.css');
+            $neo->copy('projects/templates/css/parts/menu.css','css/parts/menu.css');
+            $neo->copy('projects/templates/images/language-html5.png','assets/images/language-html5.png');
 
             return response()->download($neo->close())->deleteFileAfterSend();
 
