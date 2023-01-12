@@ -235,8 +235,8 @@ class ProjectController extends Controller
 
     public function export($id)
     {
-
         try{
+
             $project = Project::where('uuid',$id)->firstOrFail();
             $pages = Page::where('project_id',$project->id)->get();
 
@@ -286,6 +286,5 @@ class ProjectController extends Controller
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
-
 
 }
