@@ -6,12 +6,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Commons\Markdown;
+use App\Commons\CodeTemplate;
+use App\Commons\NeoZip;
 use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
 use App\Models\User;
 use App\Models\UserDesign;
 use App\Models\Page;
+use App\Models\Design;
 use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\ProjectCopyRequest;
 use App\Http\Requests\ProjectUpdateRequest;
@@ -19,8 +23,9 @@ use App\Http\Resources\PageResource;
 use App\Http\Resources\PagesResource;
 use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
-use App\Models\Design;
+
 use Exception;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -226,4 +231,61 @@ class ProjectController extends Controller
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
+
+
+    public function export($id)
+    {
+
+        try{
+            $project = Project::where('uuid',$id)->firstOrFail();
+            $pages = Page::where('project_id',$project->id)->get();
+
+            $make_path = 'projects/exports/'.$project['name'];
+            $neo = new NeoZip(storage_path('app/projects/zips/'.$project['name'].'.zip'),$make_path);
+            Storage::disk('local');
+            Storage::makeDirectory($make_path);
+            Storage::makeDirectory($make_path.'/css');
+            Storage::makeDirectory($make_path.'/js');
+            Storage::makeDirectory($make_path.'/assets/designs');
+            Storage::makeDirectory($make_path.'/assets/images');
+
+            $settings = [];
+
+            $lis = CodeTemplate::itemSet($pages);
+
+            foreach($pages as $index => $page){
+                $number = $index + 1;
+                $text = Markdown::get($page['contents']);
+                $design = Design::find($page['design_id']);
+                $neo->put('assets/designs/'.$design['uuid'].'.json', $design['contents']);
+                $settings[$page['number']] = [
+                    'name' => $page['title'],
+                    'design' => 'design_'.$number,
+                    'number' => $page['number']
+                ];
+                $page['response'] = CodeTemplate::htmlSet($text,$page['title'],$design['uuid'],$lis);
+                $neo->put($page['title'].'_'.$page['number'].'.html', $page['response']);
+            }
+
+            $neo->put('assets/settings.json', json_encode($settings));
+            $neo->copy('projects/templates/js/design-setting.js','js/design-setting.js');
+            $neo->copy('projects/templates/js/parts/header.js','js/parts/header.js');
+            $neo->copy('projects/templates/css/sanitize.css','css/sanitize.css');
+            $neo->copy('projects/templates/css/variable.css','css/variable.css');
+            $neo->copy('projects/templates/css/parts/menu.css','css/parts/menu.css');
+            $neo->copy('projects/templates/images/language-html5.png','assets/images/language-html5.png');
+
+            return response()->download($neo->close())->deleteFileAfterSend();
+
+        }catch(\GuzzleHttp\Exception\ConnectException $e){
+            return response()->json($e->getHandlerContext(), Response::HTTP_BAD_REQUEST);
+        }catch(\GuzzleHttp\Exception\RequestException $e){
+            return response()->json($e->getHandlerContext(), Response::HTTP_BAD_REQUEST);
+        }catch(Exception $e){
+            return response()->json($e, $e->getCode());
+        }
+        return response()->json(false, Response::HTTP_NOT_FOUND);
+    }
+
+
 }
