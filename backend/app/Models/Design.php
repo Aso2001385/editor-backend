@@ -16,7 +16,6 @@ class Design extends Model
         'name',
         'point',
         'contents',
-        'preview'
     ];
 
     protected $datas = ['deleted_at'];
