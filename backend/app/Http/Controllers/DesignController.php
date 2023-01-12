@@ -40,10 +40,8 @@ class DesignController extends Controller
      */
     public function store(CreateDesignRequest $request)
     {
-        //
         $request['user_id'] = Auth::id();
         $request['uuid'] = (string) Str::uuid();
-        logger()->error($request->except(['contents']));
         $design = Design::create($request->all());
         UserDesign::create([
             'design_id' => $design->id,
@@ -121,7 +119,8 @@ class DesignController extends Controller
             if($design['user_id'] == Auth::id()){
                 $preview = $request->preview;
                 $path = 'previews/designs/'.$design->uuid.'.txt';
-                Storage::put($path, $preview);
+                if(isset($preview))
+                    Storage::put($path, $preview);
                 $design->update($request->except('preview'));
                 return response()->json(new DesignResource($design), Response::HTTP_OK);
             }
