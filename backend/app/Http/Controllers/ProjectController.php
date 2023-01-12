@@ -266,7 +266,6 @@ class ProjectController extends Controller
                 $page['response'] = CodeTemplate::htmlSet($text,$page['title'],$design['uuid'],$lis);
                 $neo->put($page['title'].'_'.$page['number'].'.html', $page['response']);
             }
-            logger()->error($lis);
 
             $neo->put('assets/settings.json', json_encode($settings));
             $neo->copy('projects/templates/js/design-setting.js','js/design-setting.js');
@@ -287,6 +286,5 @@ class ProjectController extends Controller
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
-
 
 }
