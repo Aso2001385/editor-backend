@@ -45,6 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('designs/{id}/buy', [DesignController::class, 'buy']);
 
     // Route::get('/designs/gacha', [DesignController::class, 'gacha']);
+
+    Route::get('export/{id}',[ProjectController::class, 'export']);
 });
 
 Route::post('users', [UserController::class,'store']);
@@ -54,7 +56,6 @@ Route::post('verifications/test',[VerificationController::class,'test']);
 Route::post('verifications',[VerificationController::class,'verificationCheck']);
 Route::get('verifications/{email}',[VerificationController::class,'reSend']);
 
-Route::get('projects/export/{id}',[ProjectController::class, 'export']);
 
 Route::get('cors/test',[LoginController::class,'testGet']);
 Route::post('cors/test',[LoginController::class,'testPost']);

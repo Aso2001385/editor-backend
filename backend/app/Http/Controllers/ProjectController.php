@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Commons\Markdown;
+use App\Commons\CodeTemplate;
+use App\Commons\NeoZip;
 use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\ProjectDesign;
@@ -20,8 +23,7 @@ use App\Http\Resources\PageResource;
 use App\Http\Resources\PagesResource;
 use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Client\RequestException;
+
 use Exception;
 use Illuminate\Support\Facades\Storage;
 
@@ -233,109 +235,52 @@ class ProjectController extends Controller
 
     public function export($id)
     {
-        if(isset(Project::where('uuid','=',$id)->first()['id'])){
-            $project=Project::where('uuid','=',$id)->first();
-            $pages=Page::where('project_id','=',$project->id)->get();
 
-            $save_path = storage_path('app/'.$project['name'].'.zip');
-            $zip = new \ZipArchive();
-            $zip->open($save_path, \ZipArchive::CREATE);
+        try{
+            $project = Project::where('uuid',$id)->firstOrFail();
+            $pages = Page::where('project_id',$project->id)->get();
 
-            Storage::disk('local'); //公開時はpublicに変更
-            Storage::makeDirectory($project['name']);
-            Storage::makeDirectory($project['name'].'/css');
-            Storage::makeDirectory($project['name'].'/js');
-            Storage::makeDirectory($project['name'].'/assets/designs');
-            Storage::makeDirectory($project['name'].'/assets/images');
-            $setting_json_contents_first="[\n";
-            $setting_json_contents_last="]";
+            $make_path = 'projects/exports/'.$project['name'];
+            $neo = new NeoZip(storage_path('app/projects/zips/'.$project['name'].'.zip'),$make_path);
+            Storage::disk('local');
+            Storage::makeDirectory($make_path);
+            Storage::makeDirectory($make_path.'/css');
+            Storage::makeDirectory($make_path.'/js');
+            Storage::makeDirectory($make_path.'/assets/designs');
+            Storage::makeDirectory($make_path.'/assets/images');
 
-            $zip->addEmptyDir('css');
-            $zip->addEmptyDir('assets/images');
-            try{
-                foreach($pages as $page)
-                {
-                    $response=Http::withToken(config('markdownapi.token'))
-                    ->withHeaders([
-                        'Accept'=>config('markdownapi.accept'),
-                        'Content-type'=>'text/plain'
-                    ])
-                    ->post(config('markdownapi.url'),[
-                        'text'=>$page['contents']
-                    ])->throw()->body();
-                    $design=Design::find($page['design_id'])->first();
-                    Storage::put($project['name'].'/assets/designs/'.$design['name'].'.json', $design['contents']);
+            $settings = [];
 
-                    $file_path = storage_path('app/'. $project['name'].'/assets/designs/'.$design['name'].'.json');
-                    $zip->addFile($file_path,'assets/designs/'.$design['name'].'.json');
-
-                    $setting_json_contents[$page['number']]="\t{\n\t\t".'"name":"'.$page['title'].'"'.",\n\t\t".'"design":"'.$design['name'].'"'.",\n\t\t".'"number":'.$page['number']."\n\t},\n";
-                    $page['response']= "<html>\n<body>\n<div class=".'"content"'.">\n".$response."</div>\n</body>\n</html>";
-                    Storage::put($project['name'].'/'.$page['title'].'_'.$page['number'].'.html', $page['response']);
-
-                    $file_path = storage_path('app/'. $project['name'].'/'.$page['title'].'_'.$page['number'].'.html');
-                    $zip->addFile($file_path, $page['title'].'_'.$page['number'].'.html');
-                }
-
-                $content = '';
-
-                for($i=1;$i<=count($setting_json_contents);$i++)
-                {
-                    if($i==1)
-                    {
-                        $content .= $setting_json_contents_first . $setting_json_contents[$i];
-                    }
-                    else if($i==count($setting_json_contents))
-                    {
-                        $content .= $setting_json_contents[$i] . $setting_json_contents_last;
-                    }
-                    else
-                    {
-                        $content .= $content . $setting_json_contents[$i];
-                    }
-                }
-
-                Storage::put($project['name'].'/assets/settings.json', $content);
-
-                $file_path = storage_path('app/'. $project['name'].'/assets/settings.json');
-                $zip->addFile($file_path, 'assets/settings.json');
-
-                $design_setting_content="
-export function styleSetter(tags) {
-    const root = document.querySelector(':root')
-    Object.keys(tags).forEach(tag => {
-        Object.keys(tags[tag].attributes).forEach(attribute => {
-            root.style.setProperty(\n\t\t\t\t"
-                .'`--${tag}-${attribute}`,'
-                ."\n\t\t\t\ttags[tag].attributes[attribute].value + tags[tag].attributes[attribute].unit
-            )
-        })
-    })
-}";
-
-                Storage::put($project['name'].'/js/design-setting.js', $design_setting_content);
-
-                $file_path = storage_path('app/'. $project['name'].'/js/design-setting.js');
-                $zip->addFile($file_path, 'js/design-setting.js');
-
-                $zip->close();
-
-                return response()->download($save_path);
-                // return response()->download($save_path)->deleteFileAfterSend();
+            foreach($pages as $index => $page){
+                $number = $index + 1;
+                $text = Markdown::get($page['contents']);
+                $design = Design::find($page['design_id']);
+                $neo->put('assets/designs/'.$design['uuid'].'.json', $design['contents']);
+                $settings[$page['number']] = [
+                    'name' => $page['title'],
+                    'design' => 'design_'.$number,
+                    'number' => $page['number']
+                ];
+                $page['response'] = CodeTemplate::htmlSet($text,$page['title'],$design['uuid']);
+                $neo->put($page['title'].'_'.$page['number'].'.html', $page['response']);
             }
-            catch(\GuzzleHttp\Exception\ConnectException $e)
-            {
-                return response()->json($e->getHandlerContext(), Response::HTTP_BAD_REQUEST);
-            }
-            catch(\GuzzleHttp\Exception\RequestException $e)
-            {
-                return response()->json($e->getHandlerContext(), Response::HTTP_BAD_REQUEST);
-            }
-            catch(Exception $e)
-            {
-                return response()->json($e, $e->getCode());
-            }
+
+            $neo->put('assets/settings.json', json_encode($settings));
+            $neo->copy('projects/templates/design-setting.js','js/design-setting.js');
+            $neo->copy('projects/templates/sanitize.css','css/sanitize.css');
+            $neo->copy('projects/templates/variable.css','css/variable.css');
+
+            return response()->download($neo->close())->deleteFileAfterSend();
+
+        }catch(\GuzzleHttp\Exception\ConnectException $e){
+            return response()->json($e->getHandlerContext(), Response::HTTP_BAD_REQUEST);
+        }catch(\GuzzleHttp\Exception\RequestException $e){
+            return response()->json($e->getHandlerContext(), Response::HTTP_BAD_REQUEST);
+        }catch(Exception $e){
+            return response()->json($e, $e->getCode());
         }
         return response()->json(false, Response::HTTP_NOT_FOUND);
     }
+
+
 }
