@@ -11,7 +11,7 @@ use App\Models\Design;
 use App\Models\UserVerifications;
 use App\Mail\TestMail;
 use App\Mail\VerificationMail;
-use App\Commons\DesignCommon;
+
 
 class VerificationController extends Controller
 {
@@ -26,22 +26,13 @@ class VerificationController extends Controller
     public function verificationCheck(Request $request)
     {
         $verification_info=UserVerifications::where('email','=',$request['email'])->first();
-        $temp=DesignCommon::design();
+
         if($verification_info!=null && $verification_info['code'] == $request['code']){
             $user = User::create([
                 'name'=>$verification_info['name'],
                 'email'=>$verification_info['email'],
                 'password'=>$verification_info['password'],
             ]);
-            $newDesign = Design::create([
-                'uuid' => Str::uuid(),
-                'user_id' => $user->id,
-                'name' => 'Design1',
-                'point' => 0,
-                'contents' => $temp,
-            ]);
-
-          
 
             $verification_info->forceDelete();
             return response()->json($user, Response::HTTP_OK);
