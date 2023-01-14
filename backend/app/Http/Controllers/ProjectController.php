@@ -58,23 +58,20 @@ class ProjectController extends Controller
             'user_id' => $project['user_id']
         ]);
 
-        $page = Page::create([
-            'project_id'=>$project['id'],
-            'user_id'=>$project['user_id'],
-            'design_id'=>1,
-            'number'=>1,
-            'title'=>'新規ページ',
-            'contents'=>'# 新規ページ',
-        ]);
-
         $user_designs = UserDesign::where('user_id', $project->user_id)->select('design_id')->get();
 
+        ProjectDesign::create([
+            'design_id' => 1,
+            'project_id' => $project['id']
+        ]);
         foreach ($user_designs as $user_design) {
             ProjectDesign::create([
                 'design_id' => $user_design['design_id'],
                 'project_id' => $project['id']
             ]);
         }
+
+        Page::firstAdd($project->id);
 
         return response()->json(new ProjectResource($project), Response::HTTP_OK);
     }
@@ -132,25 +129,16 @@ class ProjectController extends Controller
 
     public function save(Request $request)
     {
-
         try {
-
             $project_id = Project::where('uuid',$request['project_uuid'])->firstOrFail()->id;
             $request['user_id'] = Auth::id();
-
-
             $request['design_id']=Design::where('uuid',$request['design_uuid'])->firstOrFail()->id;
             $request['design_id']=Design::where('uuid',$request['design_uuid'])->firstOrFail()->id;
             $page = Page::updateOrCreate(['project_id'=>$request['project_id'],'number'=>$request['number']],$request->except(['project_uuid','design_uuid']));
             return response()->json(new PageResource($page), Response::HTTP_OK);
-
         } catch (Exception $e) {
-
             return response()->json($e, Response::HTTP_NOT_FOUND);
-
         }
-
-
     }
 
     /**
@@ -161,7 +149,6 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-        //
         if(isset(Project::where('uuid','=',$id)->first()['id'])){
             $project = new ProjectResource(Project::where('uuid','=',$id)->first());
             return response()->json($project, Response::HTTP_OK);
@@ -178,7 +165,7 @@ class ProjectController extends Controller
      */
     public function update(ProjectUpdateRequest $request, $id)
     {
-        //
+
         if(isset(Project::where('uuid','=',$id)->first()['id'])){
             $project=Project::where('uuid','=',$id)->first();
             $request['user_id']=Auth::id();
@@ -193,10 +180,7 @@ class ProjectController extends Controller
         $page=Page::findOrFail($id);
         $project_id=Project::select('id')->where('id','=',$page['project_id'])->first()['id'];
         $page_count=count(Page::where('project_id','=',$project_id)->get())-1;
-        if($page_count==0)
-        {
-            return response()->json("これ以上削除出来ません", Response::HTTP_ACCEPTED);
-        }
+        if($page_count==0) return response()->json("これ以上削除出来ません", Response::HTTP_ACCEPTED);
         $above_pages=Page::where('project_id','=',$project_id)->where('number','>',$page['number'])->get();
         $page->forceDelete();
         if(count($above_pages)!=0)

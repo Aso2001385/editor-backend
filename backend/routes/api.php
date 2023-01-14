@@ -40,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('pages/{id}',[PageController::class,'save']);
     Route::delete('pages/{id}',[ProjectController::class,'pageDelete']);
 
-
+    Route::get('designs/projects/{uuid}', [DesignController::class, 'projectDesigns']);
     Route::apiResource('designs', DesignController::class);
     Route::get('designs/{id}/buy', [DesignController::class, 'buy']);
 

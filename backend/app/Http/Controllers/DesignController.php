@@ -15,6 +15,7 @@ use App\Http\Requests\CreateDesignRequest;
 use App\Http\Requests\DesignUpdateRequest;
 use App\Http\Resources\DesignCollection;
 use App\Http\Resources\DesignResource;
+use App\Models\Project;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\File;
 
@@ -29,6 +30,15 @@ class DesignController extends Controller
     {
         $designs = User::findOrFail(Auth::id())->designs;
 
+        return response()->json(new DesignCollection($designs), Response::HTTP_OK);
+    }
+
+    public function projectDesigns($uuid){
+        $id = Project::where('uuid',$uuid)->firstOrFail()->id;
+        logger()->error($id);
+        $designs = ProjectDesign::where('project_id',$id)->get()->toArray();
+        $designs_id = array_column(ProjectDesign::where('project_id',$id)->get()->toArray(),'design_id');
+        $designs = Design::whereIn('id',$designs_id)->get();
         return response()->json(new DesignCollection($designs), Response::HTTP_OK);
     }
 
