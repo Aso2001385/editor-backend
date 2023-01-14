@@ -35,7 +35,7 @@ class FirstSeeder extends Seeder
             'contents' => DesignCommon::design(),
         ]);
 
-        Storage::put('previews/designs/'.$design->uuid.'.txt', Storage::get('previews/templates/preset.txt'));
+        Storage::put('previews/designs/'.$design->uuid.'.txt', DesignCommon::preview());
 
     }
 }
