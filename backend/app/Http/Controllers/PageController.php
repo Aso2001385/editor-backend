@@ -27,12 +27,10 @@ use Illuminate\Support\Facades\DB;
 class PageController extends Controller
 {
 
-
     public function save($uuid,Request $request)
     {
 
         try {
-
 
             if(isset($request->pages)){
                 $id = Project::where('uuid',$uuid)->firstOrFail()->id;
@@ -42,6 +40,7 @@ class PageController extends Controller
                 $copys = [];
                 $copy_ids = [];
                 $last = [];
+                $design_id = Design::where('uuid',$request->last['design_uuid'])->firstOrFail()->id;
 
                 foreach($request->pages as $index=>$page){
 
@@ -54,17 +53,19 @@ class PageController extends Controller
                     }else if($page['id'] < 0){
 
                         $delete_ids[] = $page['id'] * -1;
-                    }else if($page['id'] === $request->last){
+
+                    }else if($page['id'] === $request->last['id']){
 
                         $last = [
                             'id'=>  $page['id'],
                             'user_id' => Auth::id(),
                             'title'=> $page['title'],
-                            'contents' => '# 新規ページ',
+                            'contents' => '',
                             'number' => $page['number'],
                             'project_id' => $id,
-                            'design_id' =>  Design::where('uuid',$page['design_uuid'])->firstOrFail()->id
+                            'design_id' => $design_id
                         ];
+
                     }else{
 
                         $upserts[] = [
@@ -74,13 +75,15 @@ class PageController extends Controller
                             'contents' => '# 新規ページ',
                             'number' => $page['number'],
                             'project_id' => $id,
-                            'design_id' =>  Design::where('uuid',$page['design_uuid'])->firstOrFail()->id
+                            'design_id' => $design_id
                         ];
                     }
                 }
 
                 if(count($upserts) - (count($delete_ids)+count($copy_ids)) > 1){
                     array_push($upserts,$last);
+                }else{
+                    $upserts = $last;
                 }
 
                 foreach($copys as $copy){
@@ -92,21 +95,22 @@ class PageController extends Controller
                 }
 
                 Page::whereIn('id', $delete_ids)->delete();
-                logger()->error('aaa');
-                logger()->error($upserts);
+
                 Page::upsert($upserts,['id'],['title','number','design_id']);
 
                 return response()->json(new PageCollection(Project::find($id)->pages), Response::HTTP_OK);
             }else{
+
                 $page = Page::find($request->id);
                 $page['contents'] = $request->contents;
                 $page->save();
                 return response()->json(new PageResource($page), Response::HTTP_OK);
-            }
 
+            }
 
         } catch (Exception $e) {
 
+            logger()->error($e);
             return response()->json($e, Response::HTTP_NOT_FOUND);
 
         }
@@ -123,20 +127,14 @@ class PageController extends Controller
     public function show($uuid,$number)
     {
 
-        logger()->error([$uuid,$number]);
+
         try {
-
-
             $id = Project::where('uuid',$uuid)->firstOrFail()->id;
-
             $page = new PageResource(Page::where('project_id',$id)->where('number',$number)->firstOrFail());
-
             return response()->json($page, Response::HTTP_OK);
-
         } catch (Exception $e) {
             logger()->error($e);
             return response()->json($e, Response::HTTP_NOT_FOUND);
-
         }
 
     }
@@ -166,14 +164,10 @@ class PageController extends Controller
         $page=Page::findOrFail($id);
         $project_id=Project::select('id')->where('id','=',$page['project_id'])->first()['id'];
         $page_count=count(Page::where('project_id','=',$project_id)->get())-1;
-        if($page_count==0)
-        {
-            return response()->json("これ以上削除出来ません", Response::HTTP_ACCEPTED);
-        }
+        if($page_count==0) return response()->json("これ以上削除出来ません", Response::HTTP_ACCEPTED);
         $above_pages=Page::where('project_id','=',$project_id)->where('number','>',$page['number'])->get();
         $page->forceDelete();
-        if(count($above_pages)!=0)
-        {
+        if(count($above_pages)!=0){
             foreach($above_pages as $above_page)
             {
                 $above_page['number']-=1;
