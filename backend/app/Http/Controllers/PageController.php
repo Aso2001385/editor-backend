@@ -40,7 +40,7 @@ class PageController extends Controller
                 $copys = [];
                 $copy_ids = [];
                 $last = [];
-                $design_id = Design::where('uuid',$request->last(['design_uuid']))->firstOrFail()->id;
+                $design_id = Design::where('uuid',$request->last['design_uuid'])->firstOrFail()->id;
 
                 foreach($request->pages as $index=>$page){
 
@@ -53,6 +53,7 @@ class PageController extends Controller
                     }else if($page['id'] < 0){
 
                         $delete_ids[] = $page['id'] * -1;
+
                     }else if($page['id'] === $request->last['id']){
 
                         $last = [
@@ -109,6 +110,7 @@ class PageController extends Controller
 
         } catch (Exception $e) {
 
+            logger()->error($e);
             return response()->json($e, Response::HTTP_NOT_FOUND);
 
         }
