@@ -226,6 +226,7 @@ class ProjectController extends Controller
 
             $make_path = 'projects/exports/'.$project['name'];
             $neo = new NeoZip(storage_path('app/projects/zips/'.$project['name'].'.zip'),$make_path);
+
             Storage::disk('local');
             Storage::makeDirectory($make_path);
             Storage::makeDirectory($make_path.'/css');
@@ -234,12 +235,14 @@ class ProjectController extends Controller
             Storage::makeDirectory($make_path.'/assets/images');
 
             $settings = [];
-
             $lis = CodeTemplate::itemSet($pages);
 
             foreach($pages as $index => $page){
+                $code_template = new CodeTemplate();
                 $number = $index + 1;
-                $text = Markdown::get($page['contents']);
+                $text = $code_template->slideReplace($page['contents']);
+                $text = Markdown::get($text);
+                $text = $code_template->slideInjection($text);
                 $design = Design::find($page['design_id']);
                 $neo->put('assets/designs/'.$design['uuid'].'.json', $design['contents']);
                 $settings[$page['number']] = [
@@ -254,9 +257,11 @@ class ProjectController extends Controller
             $neo->put('assets/settings.json', json_encode($settings));
             $neo->copy('projects/templates/js/design-setting.js','js/design-setting.js');
             $neo->copy('projects/templates/js/parts/header.js','js/parts/header.js');
+            $neo->copy('projects/templates/js/parts/slide.js','js/parts/slide.js');
             $neo->copy('projects/templates/css/sanitize.css','css/sanitize.css');
             $neo->copy('projects/templates/css/variable.css','css/variable.css');
             $neo->copy('projects/templates/css/parts/menu.css','css/parts/menu.css');
+            $neo->copy('projects/templates/css/parts/slide.css','css/parts/slide.css');
             $neo->copy('projects/templates/images/language-html5.png','assets/images/language-html5.png');
 
             return response()->download($neo->close())->deleteFileAfterSend();
