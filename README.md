@@ -33,7 +33,7 @@ Version:
 [FrontEnd](https://github.com/Aso2001385/editor-frontend/edit/main/README.md)
 
 ## 環境構築
-[環境構築手順](https://github.com/Aso2001385/editorbackend/blob/readme/reference/backend.md)
+[環境構築手順](/reference/backend.md)
 
 - クローン後、VS Code で本プロジェクトを開き、おすすめで表示される拡張機能を全てインストールしてください。もしくは、Extensions > ・・・ > Show Recommended Extensions）
 - [backend](/backend/README.md)
