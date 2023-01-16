@@ -3,73 +3,20 @@ project直下に　**.envファイル**作成し、[.env.example](.env.example) 
 
 # backend/.env
 backendディレクトリに**.envファイル**作成し、[backend/.env.example](backend/.env.example) の中身をペーストし、以下の内容に書き換え
-※ENV_AUTH_TOKEN,ENV_ACCEPT,MARK_DOWN_API_URLの記載は[こちら](/reference/MarkDownAPI.md)で説明
-
-```
-APP_NAME=EDITOR_API
-APP_ENV=local
-APP_KEY=base64:xF8u3/czbZszmRyziPIDl9dpleeHPGISRHv3YJFa++Y=
-APP_DEBUG=true
-APP_URL=http://localhost:8080
+※ENV_AUTH_TOKEN,ENV_ACCEPTの記載は[こちら](/reference/MarkDownAPI.md)で説明
 
 
-# マスターユーザー
-MASTER_USER_NAME=Master
-MASTER_USER_MAIL=　#好きなメールアドレス
-MASTER_USER_PASSWORD= #好きなパスワード
+- APP_URL= http://localhost:8080
+  - このprojectを実行するURLを入れます
 
-# MarkDownAPI関連
-ENV_AUTH_TOKEN=
-ENV_ACCEPT=
-MARK_DOWN_API_URL=https://api.github.com/markdown
+\# マスターユーザー
+- MASTER_USER_NAME=Master
+- MASTER_USER_MAIL= YOUR_EMAIL
+  - seeder実行で必須の情報となるため使われてないmailアドレスを入れるとよい
+- MASTER_USER_PASSWORD= YOUR_PASSWORD
+  -  seeder実行で必須の情報となるためpasswordを入力
 
-
-LOG_CHANNEL=stack
-LOG_DEPRECATIONS_CHANNEL=null
-LOG_LEVEL=debug
-
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=local
-DB_USERNAME=local-user
-DB_PASSWORD=local-pass
-
-BROADCAST_DRIVER=log
-CACHE_DRIVER=file
-FILESYSTEM_DRIVER=local
-QUEUE_CONNECTION=sync
-SESSION_DRIVER=file
-SESSION_LIFETIME=120
-SANCTUM_STATEFUL_DOMAINS=localhost:3000
-SESSION_DOMAIN=localhost
-
-MEMCACHED_HOST=127.0.0.1
-
-REDIS_HOST=127.0.0.1
-REDIS_PASSWORD=null
-REDIS_PORT=6379
-
-MAIL_MAILER=smtp
-MAIL_HOST=mailhog
-MAIL_PORT=1025
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS=null
-MAIL_FROM_NAME="${APP_NAME}"
-
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=
-AWS_USE_PATH_STYLE_ENDPOINT=false
-
-PUSHER_APP_ID=
-PUSHER_APP_KEY=
-PUSHER_APP_SECRET=
-PUSHER_APP_CLUSTER=mt1
-
-MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
-MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
-```
+- SANCTUM_STATEFUL_DOMAINS=localhost:3000
+  - APIを呼び出すfrontendのドメイン 
+- SESSION_DOMAIN=localhost
+  - トップレベルドメイン 
