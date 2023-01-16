@@ -1,5 +1,5 @@
 # .env
-project直下に　**.envファイル**作成し、[.env.example](.env.example) の中身をペースト
+project直下に　**.envファイル**作成し、[.env.example](/.env.example) の中身をペースト
 
 # backend/.env
 backendディレクトリに**.envファイル**作成し、[backend/.env.example](backend/.env.example) の中身をペーストし、以下の内容に書き換え
