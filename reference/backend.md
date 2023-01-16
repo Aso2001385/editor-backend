@@ -1,4 +1,4 @@
-### Backend 環境構築
+### Backend 環境構築手順
 
 - .env.example ファイルの中身をもとに.env ファイルを作成する
 
@@ -27,6 +27,9 @@ $ chmod -R 777 storage
 
 # migration実行
 $ php artisan migrate
+
+# 必須データ挿入
+$ php artisan db:seed --class FirstSeeder
 
 ```
 
