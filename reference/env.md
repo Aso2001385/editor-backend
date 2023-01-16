@@ -3,7 +3,7 @@ project直下に　**.envファイル**作成し、[.env.example](.env.example) 
 
 # backend/.example
 backendフォルダに.envファイル作成し、[backend/.env.example](backend/.env.example) の中身をペーストし、以下の内容に書き換え
-※ENV_AUTH_TOKEN,ENV_ACCEPT,MARK_DOWN_API_URLは[こちら](/reference/MarkDownAPI.md)で説明
+※ENV_AUTH_TOKEN,ENV_ACCEPT,MARK_DOWN_API_URLの記載は[こちら](/reference/MarkDownAPI.md)で説明
 
 ```
 APP_NAME=EDITOR_API
