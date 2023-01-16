@@ -1,6 +1,25 @@
-# FES
+# [](https://www.fridayeditor.click/)FRIDAY EDITOR
 
-## 必須ツール
+## FRIDAY Editorとは
+markdown方式で記載された文をhtmlに変換し、自作のデザインを反映させることが出来ます ***Webサイト作成サービス***
+
+## [](https://www.fridayeditor.click/explanation) 機能説明&利用手順
+
+## BackEndでの仕様
+基礎的なCrudを使用し、DBとの連携を行っている
+### 例外的な処理
+1. export(ダウンロード)機能  
+  Storage操作を行い作成されたProjectのファイルを作成し、  
+  その内容をzipファイルに移行し、そのzipファイルをダウンロード
+2. MarkDownAPI連携  
+  markdownの記述をpostで送信することによってHTMLをResponseしてくれるMarkDownAPIの連携
+
+
+## 使用技術
+1. Laravel
+2. Docker
+3. StopLight
+
 
 - PHP ver8.1
 - Node.js v16 & Yarn v1.22 (バージョン管理のために[Volta](https://docs.volta.sh/guide/getting-started)でインストール推奨。Volta を入れれば特に作業不要)
