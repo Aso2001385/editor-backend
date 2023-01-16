@@ -12,16 +12,19 @@ markdown方式で記載された文をhtmlに変換し、自作のデザイン�
   Storage操作を行い作成されたProjectのファイルを作成し、  
   その内容をzipファイルに移行し、そのzipファイルをダウンロード
 2. MarkDownAPI連携  
-  markdownの記述をpostで送信することによってHTMLをResponseしてくれるMarkDownAPIの連携
+  MarkDownの記述をpostで送信することによってHTMLをResponseしてくれるMarkDownAPIの連携
 
 
 ## 使用技術
 1. Laravel
 2. Docker
-3. StopLight
-
-
+3. StopLight  
+Version:  
+- Larvel ver8.75
 - PHP ver8.1
+- Docker ver20.10.21
+- StopLight ver3.1.0
+
 - Node.js v16 & Yarn v1.22 (バージョン管理のために[Volta](https://docs.volta.sh/guide/getting-started)でインストール推奨。Volta を入れれば特に作業不要)
 - Make for Windows (windows の方のみ)
   1. http://gnuwin32.sourceforge.net/packages/make.htm にアクセス
