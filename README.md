@@ -7,15 +7,17 @@ markdown方式で記載された文をhtmlに変換し、自作のデザイン�
 
 ## BackEndでの仕様
 基礎的なCrudを使用し、DBとの連携を行っている
+
 ### 例外的な処理
 1. export(ダウンロード)機能  
   Storage操作を行い作成されたProjectのファイルを作成し、  
   その内容をzipファイルに移行し、そのzipファイルをダウンロード
 2. MarkDownAPI連携  
-  MarkDownの記述をpostで送信することによってHTMLをResponseしてくれるMarkDownAPIの連携
+  MarkDownの記述をpostで送信することによって
+  HTMLに変換された文をResponseしてくれるMarkDownAPIの連携
 
 
-## 使用技術
+## 使用ツール
 1. Laravel
 2. Docker
 3. StopLight
@@ -27,20 +29,8 @@ Version:
 - Docker ver20.10.21
 - StopLight ver3.1.0
 
-- Node.js v16 & Yarn v1.22 (バージョン管理のために[Volta](https://docs.volta.sh/guide/getting-started)でインストール推奨。Volta を入れれば特に作業不要)
-- Make for Windows (windows の方のみ)
-  1. http://gnuwin32.sourceforge.net/packages/make.htm にアクセス
-  1. [Complete package, except sources]の[Setup]をクリックしてインストーラをダウンロード
-  1. インストーラに従い、インストール　※インストール先のパスをコピーしておくとよい
-  1. `コピーしていたパス + bin/` を環境変数に追加
-- postman https://www.postman.com/downloads/
-- DBeaver https://dbeaver.io/download/
-  - local からの接続情報は以下です。
-    - Host: localhost
-    - Port: 33306
-    - Database: fes-local
-    - User: fes-local-user
-    - Password: fes-local-pass
+
+[FrontEnd](https://github.com/Aso2001385/editor-frontend/edit/main/README.md)
 
 ## 環境構築
 
