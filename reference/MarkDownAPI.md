@@ -26,9 +26,5 @@ MarkdownドキュメントをHTMLページあるいは生のテキストとし�
 backend/.envに記載
 
 
-```
-ENV_AUTH_TOKEN = <YOUR-TOKEN>
-ENV_ACCEPT = application/vnd.github+json
-MARK_DOWN_API_URL = https://api.github.com/markdown
-
-```
+- ENV_AUTH_TOKEN = YOUR_TOKEN
+  -　Githubで作成したTOKEN 
