@@ -1,6 +1,6 @@
 # [FRIDAY EDITOR](https://www.fridayeditor.click/)
 
-## FRIDAY Editorとは
+## FRIDAY EDITORとは
 markdown方式で記載された文をhtmlに変換し、自作のデザインを反映させることが出来ます ***Webサイト作成サービス***
 
 ## [機能説明&利用手順](https://www.fridayeditor.click/explanation)
