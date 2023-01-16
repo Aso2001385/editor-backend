@@ -3,9 +3,11 @@
 - .env.example ファイルの中身をもとに.env ファイルを作成する
 
 ```bash
+# editor-eackendをクローンする
+$ git clone https://github.com/Aso2001385/editor-backend.git
 
-# backendディレクトリを作る
-$ mkdir backend
+# .env,backend/.envに記載
+
 
 # Dockerコンテナをビルドする
 $ docker compose build
@@ -16,11 +18,15 @@ $ docker compose up -d
 # APPコンテナに入る
 $ docker compose exec app bash
 
+# ※以下 APPコンテナ内
 # composerアップデート
 $ composer update
 
 # ファイルの権限設定を変更
 $ chmod -R 777 storage
+
+# migration実行
+$ php artisan migrate
 
 ```
 
