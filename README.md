@@ -21,7 +21,6 @@ markdown方式で記載された文をhtmlに変換し、自作のデザイン�
 1. Laravel
 2. Docker
 3. StopLight
-4. mailhog
 
 
 Version:  
