@@ -5,8 +5,7 @@
 ```bash
 # editor-eackendをforkしクローンする
 
-# .env,backend/.envに記載
-
+# .env, backend/.envを作成し、 .env.example, backend/.env.exampleの中身をペーストし書きかえ
 
 # Dockerコンテナをビルドする
 $ docker compose build
