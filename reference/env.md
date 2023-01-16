@@ -12,6 +12,12 @@ APP_KEY=base64:xF8u3/czbZszmRyziPIDl9dpleeHPGISRHv3YJFa++Y=
 APP_DEBUG=true
 APP_URL=http://localhost:8080
 
+
+# マスターユーザー
+MASTER_USER_NAME=Master
+MASTER_USER_MAIL=　#好きなメールアドレス
+MASTER_USER_PASSWORD= #好きなパスワード
+
 # MarkDownAPI関連
 ENV_AUTH_TOKEN=
 ENV_ACCEPT=
