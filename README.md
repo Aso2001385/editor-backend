@@ -35,7 +35,7 @@ Version:
 
 [FrontEnd](https://github.com/Aso2001385/editor-frontend/edit/main/README.md)
 
-## 環境構築
+# 環境構築
 [環境構築手順](/reference/backend.md)
 
 
