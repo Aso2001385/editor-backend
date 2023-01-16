@@ -21,7 +21,7 @@ MASTER_USER_PASSWORD= #好きなパスワード
 # MarkDownAPI関連
 ENV_AUTH_TOKEN=
 ENV_ACCEPT=
-MARK_DOWN_API_URL=
+MARK_DOWN_API_URL=https://api.github.com/markdown
 
 
 LOG_CHANNEL=stack
