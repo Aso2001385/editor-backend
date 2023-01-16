@@ -66,5 +66,3 @@ Version:
   "namespaceResolver.autoSort": true,
   "namespaceResolver.sortOnSave": true,
 ```
-
-- Todo+
