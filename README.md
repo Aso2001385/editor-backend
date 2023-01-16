@@ -1,9 +1,9 @@
-# [](https://www.fridayeditor.click/)FRIDAY EDITOR
+# [FRIDAY EDITOR](https://www.fridayeditor.click/)
 
 ## FRIDAY Editorとは
 markdown方式で記載された文をhtmlに変換し、自作のデザインを反映させることが出来ます ***Webサイト作成サービス***
 
-## [](https://www.fridayeditor.click/explanation) 機能説明&利用手順
+## [機能説明&利用手順](https://www.fridayeditor.click/explanation)
 
 ## BackEndでの仕様
 基礎的なCrudを使用し、DBとの連携を行っている
@@ -19,6 +19,8 @@ markdown方式で記載された文をhtmlに変換し、自作のデザイン�
 1. Laravel
 2. Docker
 3. StopLight
+
+
 Version:  
 - Larvel ver8.75
 - PHP ver8.1
