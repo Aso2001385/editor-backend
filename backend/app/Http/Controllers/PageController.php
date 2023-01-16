@@ -80,14 +80,14 @@ class PageController extends Controller
                     }
                 }
 
-                if(count($upserts) - (count($delete_ids)+count($copy_ids)) > 1){
+                if(count($upserts) > 0){
                     array_push($upserts,$last);
                 }else{
                     $upserts = $last;
                 }
 
                 foreach($copys as $copy){
-                    $oldrow = Page::find($copy['id']);
+                    $oldrow = Page::find($copy['id'] > 0 ? $copy['id'] : $copy['id'] * -1);
                     $newrow = $oldrow->replicate();
                     $newrow['number'] = $copy['number'];
                     $newrow['title'] = $copy['title'];
