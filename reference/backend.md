@@ -1,11 +1,11 @@
-### Backend 環境構築
+### Backend 環境構築手順
 
-- .env.example ファイルの中身をもとに.env ファイルを作成する
+- .env.example ファイルの中身をもとに[.env ファイルを作成](env.md)する
 
 ```bash
+# editor-eackendをforkしクローンする
 
-# backendディレクトリを作る
-$ mkdir backend
+# .env, backend/.envを作成し、 .env.example, backend/.env.exampleの中身をペーストし書きかえ
 
 # Dockerコンテナをビルドする
 $ docker compose build
@@ -16,11 +16,18 @@ $ docker compose up -d
 # APPコンテナに入る
 $ docker compose exec app bash
 
+# ※以下 APPコンテナ内
 # composerアップデート
 $ composer update
 
 # ファイルの権限設定を変更
 $ chmod -R 777 storage
+
+# migration実行
+$ php artisan migrate
+
+# 必須データ挿入
+$ php artisan db:seed --class FirstSeeder
 
 ```
 
