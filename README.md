@@ -15,6 +15,9 @@ markdown方式で記載された文をhtmlに変換し、自作のデザイン�
 2. MarkDownAPI連携  
   MarkDownの記述をpostで送信することによって
   HTMLに変換された文をResponseしてくれるMarkDownAPIの連携
+3. メール認証機能
+  AWS-SESからのメールをmailhogを介して認証コードを送信
+  入力成功時のみユーザーが作成される
 
 
 ## 使用ツール
