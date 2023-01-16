@@ -18,7 +18,7 @@ markdown方式で記載された文をhtmlに変換し、自作のデザイン�
 ## 使用技術
 1. Laravel
 2. Docker
-3. StopLight  
+3. StopLight
 Version:  
 - Larvel ver8.75
 - PHP ver8.1
