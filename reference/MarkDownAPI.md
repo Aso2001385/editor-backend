@@ -22,4 +22,13 @@ MarkdownドキュメントをHTMLページあるいは生のテキストとし�
 # \<YOUR-TOKEN>作成方法
 [Token生成](https://rfs.jp/server/git/github/personal_access_tokens.html)
   
- 
+これらの情報はそのままコード上に上げるのはよろしくないので(***特にToken***)  
+backend/.envに記載
+
+
+```
+ENV_AUTH_TOKEN = <YOUR-TOKEN>
+ENV_ACCEPT = application/vnd.github+json
+MARK_DOWN_API_URL = https://api.github.com/markdown
+
+```
