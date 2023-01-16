@@ -1,0 +1,53 @@
+.swiper {
+  width: 80%;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.swiper-header {
+  height: 5vh;
+  background-color: #333;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.swiper-footer {
+  height: 5vh;
+  background-color: #333;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.swiper--wrapper {
+  /* wrapperのサイズを調整 */
+  height: fit-content;
+  width: fit-content;
+}
+
+.swiper-slide {
+  /* スライドのサイズを調整、中身のテキスト配置調整、背景色 */
+  color: #ffffff;
+  width: 100%;
+  height: fit-content;
+  text-align: center;
+  line-height: 300px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.swiper-slide img {
+  object-fit: contain;
+  max-height: 60vh;
+  width: 100%;
+  min-width: 50vw;
+  max-width: 70vw;
+}
+.swiper-pagination-bullet {
+  width: 12px !important;
+  height: 12px !important;
+  margin: 0 0 0 10px !important;
+  background: #333 !important;
+}
+
+.swiper-pagination-bullet:first-child {
+  margin: 0 !important;
+}
