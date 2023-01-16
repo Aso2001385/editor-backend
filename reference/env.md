@@ -1,7 +1,7 @@
-# env
+# .env
 project直下に　**.envファイル**作成し、[.env.example](.env.example) の中身をペースト
 
-# backend/.example
+# backend/.env
 backendフォルダに.envファイル作成し、[backend/.env.example](backend/.env.example) の中身をペーストし、以下の内容に書き換え
 ※ENV_AUTH_TOKEN,ENV_ACCEPT,MARK_DOWN_API_URLの記載は[こちら](/reference/MarkDownAPI.md)で説明
 
