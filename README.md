@@ -35,9 +35,6 @@ Version:
 ## 環境構築
 [環境構築手順](/reference/backend.md)
 
-- クローン後、VS Code で本プロジェクトを開き、おすすめで表示される拡張機能を全てインストールしてください。もしくは、Extensions > ・・・ > Show Recommended Extensions）
-- [backend](/backend/README.md)
-- [frontend](/frontend/README.md)
 
 ## あると便利な VSCode 拡張
 
