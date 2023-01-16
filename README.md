@@ -33,7 +33,7 @@ Version:
 - StopLight ver3.1.0
 
 
-[FrontEnd](https://github.com/Aso2001385/editor-frontend/edit/main/README.md)
+# [FrontEnd](https://github.com/Aso2001385/editor-frontend)
 
 # 環境構築
 [環境構築手順](/reference/backend.md)
