@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Design;
 
 class DesignResource extends JsonResource
 {
@@ -20,7 +21,7 @@ class DesignResource extends JsonResource
         try{
             $preview = Storage::get('previews/designs/'.$this->uuid.'.txt');
         }catch(Exception $e){
-            $preview = null;
+            $preview = Storage::get('previews/designs/'.(Design::find(1)->uuid).'.txt');
         }
 
         return [
