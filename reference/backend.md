@@ -3,8 +3,7 @@
 - .env.example ファイルの中身をもとに.env ファイルを作成する
 
 ```bash
-# editor-eackendをクローンする
-$ git clone https://github.com/Aso2001385/editor-backend.git
+# editor-eackendをforkしクローンする
 
 # .env,backend/.envに記載
 
