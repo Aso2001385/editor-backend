@@ -37,32 +37,3 @@ Version:
 
 
 ## あると便利な VSCode 拡張
-
-- Laravel Extension Pack
-- PHP IntelliSense
-
-```setting.json:json
-  "php.validate.executablePath": "<php実行ファイルへのパス>",
-  "php.executablePath": "<php実行ファイルへのパス>",
-  "php.suggest.basic": true,
-```
-
-- PHP DocBlocker
-
-```setting.json:json
-  "php-docblocker.gap": false,
-  "php-docblocker.useShortNames": true,
-  "php-docblocker.qualifyClassNames": true,
-  "php-docblocker.returnVoid": false,
-  "git.autofetch": true
-```
-
-- PHP Namespace Resolver
-
-```setting.json:json
-  "namespaceResolver.showMessageOnStatusBar": true,
-  "namespaceResolver.sortAlphabetically": true,
-  "namespaceResolver.sortNatural": true,
-  "namespaceResolver.autoSort": true,
-  "namespaceResolver.sortOnSave": true,
-```
